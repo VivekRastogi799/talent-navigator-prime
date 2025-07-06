@@ -45,13 +45,13 @@ export const LandingPage = ({ onSearch }: LandingPageProps) => {
         <div className="max-w-6xl mx-auto px-6 py-12">
           <div className="text-center mb-8">
             <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-3">
-              NaukriX Premium
+              NaukriX
             </div>
             <h1 className="text-4xl font-bold text-slate-800 mb-4">
               Discover Top-Tier Talent in Seconds
             </h1>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              An AI-powered talent intelligence platform built exclusively for recruiters hiring premium candidates.
+              An AI-powered talent intelligence platform built exclusively for hiring premium candidates.
             </p>
           </div>
 
@@ -94,7 +94,7 @@ export const LandingPage = ({ onSearch }: LandingPageProps) => {
                     </Button>
                     <Button variant="outline">
                       <Upload className="h-4 w-4 mr-2" />
-                      📤 Upload JD
+                      Upload JD
                     </Button>
                   </div>
                 </CardContent>
@@ -160,7 +160,7 @@ export const LandingPage = ({ onSearch }: LandingPageProps) => {
                     disabled={!skillQuery.trim()}
                   >
                     <Search className="h-4 w-4 mr-2" />
-                    🔍 Find Matching Talent
+                    Find Matching Talent
                   </Button>
                 </CardContent>
               </Card>
@@ -173,7 +173,7 @@ export const LandingPage = ({ onSearch }: LandingPageProps) => {
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-slate-800 mb-4">
-            Why Choose NaukriX Premium?
+            Why Choose NaukriX?
           </h2>
           <p className="text-lg text-slate-600">
             Get deeper context into top-tier hiring decisions with insight-rich market intelligence
