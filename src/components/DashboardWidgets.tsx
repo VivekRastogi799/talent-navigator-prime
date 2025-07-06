@@ -89,6 +89,10 @@ interface TopCompaniesProps {
 }
 
 const TopCompanies = ({ topCompanies, onCompanyClick }: TopCompaniesProps) => {
+  const handleBarClick = (data: any) => {
+    onCompanyClick(data);
+  };
+
   return (
     <Card className="shadow-lg border-0">
       <CardHeader className="pb-3">
@@ -116,7 +120,7 @@ const TopCompanies = ({ topCompanies, onCompanyClick }: TopCompaniesProps) => {
               dataKey="count"
               fill="#3B82F6"
               radius={[4, 4, 0, 0]}
-              onClick={onCompanyClick}
+              onClick={handleBarClick}
               className="cursor-pointer"
             />
           </BarChart>
@@ -253,6 +257,10 @@ interface CtcVsExpProps {
 }
 
 const CtcVsExp = ({ ctcVsExp, onChartClick }: CtcVsExpProps) => {
+  const handleScatterClick = () => {
+    onChartClick();
+  };
+
   return (
     <Card className="shadow-lg border-0">
       <CardHeader className="pb-3">
@@ -297,7 +305,7 @@ const CtcVsExp = ({ ctcVsExp, onChartClick }: CtcVsExpProps) => {
             <Scatter
               dataKey="candidates"
               fill="#3B82F6"
-              onClick={onChartClick}
+              onClick={handleScatterClick}
               className="cursor-pointer"
             />
           </ScatterChart>
@@ -326,7 +334,6 @@ const SmartSummary = () => {
 };
 
 export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
-  // Sample data for charts
   const quickStats = {
     totalProfiles: 1247,
     medianCTC: "12.5L",
@@ -387,7 +394,7 @@ export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
     onDrilldown(`${skill.skill} Candidates`, [], 'candidates');
   };
 
-  const handleChartClick = (data: any) => {
+  const handleChartClick = () => {
     onDrilldown('Filtered Candidates', [], 'candidates');
   };
 
