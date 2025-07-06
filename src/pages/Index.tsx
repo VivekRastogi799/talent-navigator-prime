@@ -5,10 +5,32 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FilterSidebar } from "@/components/FilterSidebar";
 import { DashboardWidgets } from "@/components/DashboardWidgets";
-import { Card } from "@/components/ui/card";
+import { DrilldownPanel } from "@/components/DrilldownPanel";
+import { LandingPage } from "@/components/LandingPage";
 
 const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showDashboard, setShowDashboard] = useState(false);
+  const [drilldownOpen, setDrilldownOpen] = useState(false);
+  const [drilldownData, setDrilldownData] = useState({
+    title: "",
+    data: [],
+    type: 'candidates' as 'companies' | 'skills' | 'locations' | 'candidates'
+  });
+
+  const handleSearch = (query: string, type: 'jd' | 'skill') => {
+    console.log('Search:', query, type);
+    setShowDashboard(true);
+  };
+
+  const handleWidgetDrilldown = (title: string, data: any[], type: 'companies' | 'skills' | 'locations' | 'candidates') => {
+    setDrilldownData({ title, data, type });
+    setDrilldownOpen(true);
+  };
+
+  if (!showDashboard) {
+    return <LandingPage onSearch={handleSearch} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -25,7 +47,10 @@ const Index = () => {
             >
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
-            <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+            <div 
+              className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent cursor-pointer"
+              onClick={() => setShowDashboard(false)}
+            >
               NaukriX Premium
             </div>
           </div>
@@ -66,14 +91,23 @@ const Index = () => {
         <FilterSidebar isOpen={sidebarOpen} />
         
         {/* Main Content */}
-        <main className={`flex-1 p-6 transition-all duration-300 ${sidebarOpen ? 'ml-80' : 'ml-0'}`}>
+        <main className={`flex-1 p-6 transition-all duration-300 ${sidebarOpen ? 'ml-80' : 'ml-0'} ${drilldownOpen ? 'mr-96' : 'mr-0'}`}>
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-slate-800 mb-2">Premium Talent Insights</h1>
             <p className="text-slate-600">Product Manager • Bangalore • 8-15 LPA</p>
           </div>
           
-          <DashboardWidgets />
+          <DashboardWidgets onDrilldown={handleWidgetDrilldown} />
         </main>
+
+        {/* Drilldown Panel */}
+        <DrilldownPanel
+          isOpen={drilldownOpen}
+          onClose={() => setDrilldownOpen(false)}
+          title={drilldownData.title}
+          data={drilldownData.data}
+          type={drilldownData.type}
+        />
       </div>
     </div>
   );
