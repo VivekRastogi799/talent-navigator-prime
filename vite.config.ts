@@ -9,9 +9,10 @@ export default defineConfig(({ mode }) => ({
     host: '0.0.0.0',               // allows access from any network IP
     strictPort: true,              // prevents fallback to 8081
     origin: undefined,             // disables host check
-    allowedHosts:['localhost', '127.0.0.1', 'talentnavigator.loca.lt' , 'all']        // disables domain matching (important)
-    cors: true,                     // allows cross-origin access
+    allowedHosts: ['localhost', '127.0.0.1', 'talentnavigator.loca.lt' , 'all'],        // disables domain matching (important)
     checkOrigin: false,
+    cors: true
+
   },
   plugins: [
     react(),
