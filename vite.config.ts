@@ -10,7 +10,8 @@ export default defineConfig(({ mode }) => ({
     strictPort: true,              // prevents fallback to 8081
     origin: undefined,             // disables host check
     allowedHosts: 'all',           // disables domain matching (important)
-    cors: true                     // allows cross-origin access
+    cors: true,                     // allows cross-origin access
+    checkOrigin: false,
   },
   plugins: [
     react(),
