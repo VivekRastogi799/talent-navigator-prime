@@ -3,12 +3,13 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "::",
+    host: "0.0.0.0",                 // allows external access
     port: 8080,
-    allowedHosts: 'all' // ✅ Allow all ngrok subdomains
+    strictPort: true,                // prevents fallback to 8081/5173
+    origin: undefined,               // ensure it accepts external origin
+    allowedHosts: 'all',             // ⬅️ key: allow all dynamic ngrok domains
   },
   plugins: [
     react(),
