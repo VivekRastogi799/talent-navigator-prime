@@ -48,11 +48,10 @@ export const LandingPage = ({ onSearch }: LandingPageProps) => {
               NaukriX Premium
             </div>
             <h1 className="text-4xl font-bold text-slate-800 mb-4">
-              Discover Premium Talent Insights
+              Discover Top-Tier Talent in Seconds
             </h1>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              AI-powered talent intelligence platform for hiring premium candidates. 
-              Search by job descriptions or skills to get deep market insights.
+              An AI-powered talent intelligence platform built exclusively for recruiters hiring premium candidates.
             </p>
           </div>
 
@@ -79,7 +78,7 @@ export const LandingPage = ({ onSearch }: LandingPageProps) => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Textarea
-                    placeholder="Paste your complete job description here... We'll analyze requirements and find matching premium candidates."
+                    placeholder="Paste the full JD here - we’ll instantly map ideal candidate traits and surface top premium talent."
                     value={jdText}
                     onChange={(e) => setJdText(e.target.value)}
                     className="min-h-32 resize-none"
@@ -95,7 +94,7 @@ export const LandingPage = ({ onSearch }: LandingPageProps) => {
                     </Button>
                     <Button variant="outline">
                       <Upload className="h-4 w-4 mr-2" />
-                      Upload File
+                      📤 Upload JD
                     </Button>
                   </div>
                 </CardContent>
@@ -161,7 +160,7 @@ export const LandingPage = ({ onSearch }: LandingPageProps) => {
                     disabled={!skillQuery.trim()}
                   >
                     <Search className="h-4 w-4 mr-2" />
-                    Find Matching Candidates
+                    🔍 Find Matching Talent
                   </Button>
                 </CardContent>
               </Card>
@@ -177,7 +176,7 @@ export const LandingPage = ({ onSearch }: LandingPageProps) => {
             Why Choose NaukriX Premium?
           </h2>
           <p className="text-lg text-slate-600">
-            Get deep insights into premium talent market with AI-powered intelligence
+            Get deeper context into top-tier hiring decisions with insight-rich market intelligence
           </p>
         </div>
 
@@ -189,7 +188,7 @@ export const LandingPage = ({ onSearch }: LandingPageProps) => {
               </div>
               <h3 className="text-xl font-semibold text-slate-800 mb-3">Premium Talent Pool</h3>
               <p className="text-slate-600">
-                Access to 50K+ premium candidates from top companies with verified profiles and real-time availability.
+                Access to 10lakh+ premium candidates from top companies with verified profiles and real-time availability.
               </p>
             </CardContent>
           </Card>
