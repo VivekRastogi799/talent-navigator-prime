@@ -1,4 +1,3 @@
-// src/components/UploadJD.tsx
 import React, { useState } from 'react'
 
 const UploadJD = () => {
@@ -28,8 +27,10 @@ const UploadJD = () => {
   return (
     <div className="p-4 border rounded-lg w-fit mx-auto mt-6">
       <input type="file" accept=".pdf,.doc,.docx,.txt" onChange={handleChange} />
-      <button onClick={handleUpload}>Upload JD</button>
-
+      <button
+        onClick={handleUpload}
+        className="mt-2 px-4 py-1 bg-blue-600 text-white rounded"
+      >
         Upload JD
       </button>
     </div>
