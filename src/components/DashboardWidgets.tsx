@@ -4,7 +4,6 @@ import { SkillsDistribution } from "@/components/dashboard/SkillsDistribution";
 import { DesignationSplit } from "@/components/dashboard/DesignationSplit";
 import { NoticePeriod } from "@/components/dashboard/NoticePeriod";
 import { CtcVsExp } from "@/components/dashboard/CtcVsExp";
-import { SmartSummary } from "@/components/dashboard/SmartSummary";
 import { LocationDistribution } from "@/components/dashboard/LocationDistribution";
 import { EmployerTierMapping } from "@/components/dashboard/EmployerTierMapping";
 import { CompensationIntelligence } from "@/components/dashboard/CompensationIntelligence";
@@ -83,21 +82,21 @@ export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
   ];
 
   const locationData = [
-    { name: "Bangalore", count: 856, percentage: 30.1 },
-    { name: "Mumbai", count: 534, percentage: 18.8 },
-    { name: "Delhi NCR", count: 456, percentage: 16.0 },
-    { name: "Hyderabad", count: 378, percentage: 13.3 },
-    { name: "Chennai", count: 289, percentage: 10.2 },
-    { name: "Pune", count: 198, percentage: 7.0 },
-    { name: "Kolkata", count: 89, percentage: 3.1 },
-    { name: "Ahmedabad", count: 47, percentage: 1.7 },
+    { name: "Bangalore", count: 856, percentage: 30.1, active: 72, medianCtc: 18.5, medianExp: 6.2, female: 38 },
+    { name: "Mumbai", count: 534, percentage: 18.8, active: 68, medianCtc: 22.1, medianExp: 7.1, female: 35 },
+    { name: "Delhi NCR", count: 456, percentage: 16.0, active: 74, medianCtc: 20.3, medianExp: 6.8, female: 42 },
+    { name: "Hyderabad", count: 378, percentage: 13.3, active: 70, medianCtc: 17.2, medianExp: 5.9, female: 45 },
+    { name: "Chennai", count: 289, percentage: 10.2, active: 69, medianCtc: 16.8, medianExp: 6.0, female: 40 },
+    { name: "Pune", count: 198, percentage: 7.0, active: 71, medianCtc: 18.0, medianExp: 6.3, female: 37 },
+    { name: "Kolkata", count: 89, percentage: 3.1, active: 65, medianCtc: 15.2, medianExp: 5.5, female: 41 },
+    { name: "Ahmedabad", count: 47, percentage: 1.7, active: 63, medianCtc: 14.8, medianExp: 5.2, female: 33 },
   ];
 
   const employerTierData = [
-    { name: "FAANG", value: 32, color: "#3B82F6" },
-    { name: "Unicorn", value: 28, color: "#10B981" },
-    { name: "GCC", value: 25, color: "#F59E0B" },
-    { name: "Others", value: 15, color: "#6366F1" },
+    { name: "FAANG", value: 32, color: "#3B82F6", count: 912 },
+    { name: "Unicorn", value: 28, color: "#10B981", count: 798 },
+    { name: "GCC", value: 25, color: "#F59E0B", count: 712 },
+    { name: "Others", value: 15, color: "#6366F1", count: 425 },
   ];
 
   const compensationData = [
@@ -114,10 +113,33 @@ export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
   ];
 
   const candidateIntentData = [
-    { category: "Last Seen", activeCount: 534, passiveCount: 323 },
-    { category: "Profile Views", activeCount: 456, passiveCount: 578 },
-    { category: "Job Applications", activeCount: 356, passiveCount: 189 },
-    { category: "Response Rate", activeCount: 298, passiveCount: 145 },
+    { 
+      category: "Last Profile Update", 
+      ranges: [
+        { range: "0-7 days", active: 534, passive: 123 },
+        { range: "8-30 days", active: 298, passive: 234 },
+        { range: "31-90 days", active: 187, passive: 345 },
+        { range: "90+ days", active: 98, passive: 567 }
+      ]
+    },
+    { 
+      category: "Recruiter Views", 
+      ranges: [
+        { range: "0-5", active: 234, passive: 567 },
+        { range: "6-15", active: 345, passive: 234 },
+        { range: "16-30", active: 189, passive: 123 },
+        { range: "30+", active: 87, passive: 45 }
+      ]
+    },
+    { 
+      category: "Profile Downloads", 
+      ranges: [
+        { range: "0-2", active: 456, passive: 678 },
+        { range: "3-8", active: 234, passive: 345 },
+        { range: "9-20", active: 123, passive: 234 },
+        { range: "20+", active: 67, passive: 89 }
+      ]
+    }
   ];
 
   const handleCompanyClick = (company: any) => {
@@ -194,9 +216,6 @@ export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
 
       {/* Compensation Intelligence - Full Width */}
       <CompensationIntelligence compensationData={compensationData} onChartClick={handleChartClick} />
-
-      {/* Smart Summary Generator */}
-      <SmartSummary />
     </div>
   );
 };

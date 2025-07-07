@@ -1,11 +1,9 @@
-
 import { useState } from "react";
 import { Filter, MapPin, Building2, DollarSign, Clock, GraduationCap, Users, ChevronDown, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 interface EnhancedFilterSidebarProps {
   isOpen: boolean;
@@ -16,6 +14,7 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
     location: true,
     experience: true,
     companies: true,
+    companySize: false,
     skills: false,
     ctc: false,
     notice: false,
@@ -26,6 +25,8 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
   const [selectedFilters, setSelectedFilters] = useState<{[key: string]: string[]}>({
     location: [],
     companies: [],
+    companyTiers: [],
+    companySize: [],
     skills: [],
     education: [],
     diversity: []
@@ -35,15 +36,6 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const handleSelectAll = (category: string, items: any[]) => {
-    const allValues = items.map(item => item.name);
-    setSelectedFilters(prev => ({ ...prev, [category]: allValues }));
-  };
-
-  const handleClearAll = (category: string) => {
-    setSelectedFilters(prev => ({ ...prev, [category]: [] }));
-  };
-
   const toggleFilter = (category: string, value: string) => {
     setSelectedFilters(prev => ({
       ...prev,
@@ -51,6 +43,27 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
         ? prev[category].filter(v => v !== value)
         : [...prev[category], value]
     }));
+  };
+
+  const toggleCompanyTier = (tier: string) => {
+    const tierCompanies = companies.filter(c => c.tier === tier).map(c => c.name);
+    const allSelected = tierCompanies.every(company => selectedFilters.companies.includes(company));
+    
+    if (allSelected) {
+      // Unselect all companies in this tier
+      setSelectedFilters(prev => ({
+        ...prev,
+        companies: prev.companies.filter(company => !tierCompanies.includes(company)),
+        companyTiers: prev.companyTiers.filter(t => t !== tier)
+      }));
+    } else {
+      // Select all companies in this tier
+      setSelectedFilters(prev => ({
+        ...prev,
+        companies: [...new Set([...prev.companies, ...tierCompanies])],
+        companyTiers: [...new Set([...prev.companyTiers, tier])]
+      }));
+    }
   };
 
   const locations = [
@@ -98,6 +111,14 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
     { name: "Wipro", count: 167, tier: "Others" },
     { name: "HCL", count: 134, tier: "Others" },
     { name: "Cognizant", count: 123, tier: "Others" }
+  ];
+
+  const companySizes = [
+    { name: "Startup (1-50)", count: 423 },
+    { name: "Small (51-200)", count: 567 },
+    { name: "Medium (201-1000)", count: 789 },
+    { name: "Large (1001-5000)", count: 934 },
+    { name: "Enterprise (5000+)", count: 1234 }
   ];
 
   const skills = [
@@ -163,24 +184,6 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
             </CardHeader>
             {expandedSections.location && (
               <CardContent className="pt-0">
-                <div className="flex gap-2 mb-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="text-xs"
-                    onClick={() => handleSelectAll('location', locations)}
-                  >
-                    Select All
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="text-xs"
-                    onClick={() => handleClearAll('location')}
-                  >
-                    Clear All
-                  </Button>
-                </div>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {locations.map((location) => (
                     <div key={location.name} className="flex items-center justify-between">
@@ -248,43 +251,79 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
             </CardHeader>
             {expandedSections.companies && (
               <CardContent className="pt-0">
-                <div className="flex gap-2 mb-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="text-xs"
-                    onClick={() => handleSelectAll('companies', companies)}
-                  >
-                    Select All
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="text-xs"
-                    onClick={() => handleClearAll('companies')}
-                  >
-                    Clear All
-                  </Button>
-                </div>
                 <div className="space-y-3 max-h-64 overflow-y-auto">
-                  {["FAANG", "Unicorn", "GCC", "Others"].map((tier) => (
-                    <div key={tier}>
-                      <h4 className="text-xs font-medium text-slate-700 mb-2">{tier}</h4>
-                      <div className="space-y-1">
-                        {companies.filter(c => c.tier === tier).map((company) => (
-                          <div key={company.name} className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                              <Checkbox 
-                                id={`comp-${company.name}`}
-                                checked={selectedFilters.companies.includes(company.name)}
-                                onCheckedChange={() => toggleFilter('companies', company.name)}
-                              />
-                              <label htmlFor={`comp-${company.name}`} className="text-xs cursor-pointer">{company.name}</label>
+                  {["FAANG", "Unicorn", "GCC", "Others"].map((tier) => {
+                    const tierCompanies = companies.filter(c => c.tier === tier);
+                    const allSelected = tierCompanies.every(company => selectedFilters.companies.includes(company.name));
+                    const someSelected = tierCompanies.some(company => selectedFilters.companies.includes(company.name));
+                    
+                    return (
+                      <div key={tier}>
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Checkbox 
+                            id={`tier-${tier}`}
+                            checked={allSelected}
+                            ref={(el) => {
+                              if (el) el.indeterminate = someSelected && !allSelected;
+                            }}
+                            onCheckedChange={() => toggleCompanyTier(tier)}
+                          />
+                          <label htmlFor={`tier-${tier}`} className="text-sm font-medium text-slate-700 cursor-pointer">{tier}</label>
+                          <Badge variant="outline" className="text-xs">
+                            {tierCompanies.reduce((sum, c) => sum + c.count, 0)}
+                          </Badge>
+                        </div>
+                        <div className="space-y-1 ml-6">
+                          {tierCompanies.map((company) => (
+                            <div key={company.name} className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <Checkbox 
+                                  id={`comp-${company.name}`}
+                                  checked={selectedFilters.companies.includes(company.name)}
+                                  onCheckedChange={() => toggleFilter('companies', company.name)}
+                                />
+                                <label htmlFor={`comp-${company.name}`} className="text-xs cursor-pointer">{company.name}</label>
+                              </div>
+                              <Badge variant="outline" className="text-xs">{company.count}</Badge>
                             </div>
-                            <Badge variant="outline" className="text-xs">{company.count}</Badge>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            )}
+          </Card>
+
+          {/* Company Size Filter */}
+          <Card>
+            <CardHeader 
+              className="pb-2 cursor-pointer" 
+              onClick={() => toggleSection('companySize')}
+            >
+              <CardTitle className="text-sm flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4 text-indigo-600" />
+                  Company Size
+                </div>
+                {expandedSections.companySize ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              </CardTitle>
+            </CardHeader>
+            {expandedSections.companySize && (
+              <CardContent className="pt-0">
+                <div className="space-y-2">
+                  {companySizes.map((size) => (
+                    <div key={size.name} className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox 
+                          id={`size-${size.name}`}
+                          checked={selectedFilters.companySize.includes(size.name)}
+                          onCheckedChange={() => toggleFilter('companySize', size.name)}
+                        />
+                        <label htmlFor={`size-${size.name}`} className="text-sm cursor-pointer">{size.name}</label>
+                      </div>
+                      <Badge variant="outline" className="text-xs">{size.count}</Badge>
                     </div>
                   ))}
                 </div>
@@ -308,24 +347,6 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
             </CardHeader>
             {expandedSections.skills && (
               <CardContent className="pt-0">
-                <div className="flex gap-2 mb-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="text-xs"
-                    onClick={() => handleSelectAll('skills', skills)}
-                  >
-                    Select All
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="text-xs"
-                    onClick={() => handleClearAll('skills')}
-                  >
-                    Clear All
-                  </Button>
-                </div>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {skills.map((skill) => (
                     <div key={skill.name} className="flex items-center justify-between">
@@ -393,24 +414,6 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
             </CardHeader>
             {expandedSections.education && (
               <CardContent className="pt-0">
-                <div className="flex gap-2 mb-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="text-xs"
-                    onClick={() => handleSelectAll('education', educationLevels)}
-                  >
-                    Select All
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="text-xs"
-                    onClick={() => handleClearAll('education')}
-                  >
-                    Clear All
-                  </Button>
-                </div>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {educationLevels.map((edu) => (
                     <div key={edu.name} className="flex items-center justify-between">
@@ -446,26 +449,6 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
             </CardHeader>
             {expandedSections.diversity && (
               <CardContent className="pt-0">
-                <div className="flex gap-2 mb-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="text-xs"
-                    onClick={() => handleSelectAll('diversity', [
-                      { name: "Female" }, { name: "Male" }, { name: "Differently Abled" }, { name: "LGBTQ+" }
-                    ])}
-                  >
-                    Select All
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="text-xs"
-                    onClick={() => handleClearAll('diversity')}
-                  >
-                    Clear All
-                  </Button>
-                </div>
                 <div className="space-y-2">
                   {[
                     { name: "Female", count: 1054 },
