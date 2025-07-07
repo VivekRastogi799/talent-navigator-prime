@@ -1,3 +1,4 @@
+
 import { QuickStats } from "@/components/dashboard/QuickStats";
 import { TopCompanies } from "@/components/dashboard/TopCompanies";
 import { SkillsDistribution } from "@/components/dashboard/SkillsDistribution";
@@ -134,20 +135,26 @@ export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
         onChartClick={handleChartClick}
       />
 
-      {/* Main Widgets Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Geo + Availability Mapping */}
+      {/* Enhanced Geo & Brand Analysis - Full Width */}
+      <div className="grid grid-cols-1 gap-6">
+        {/* Geo + Availability Mapping - Enhanced */}
         <LocationDistribution locationData={locationData} onLocationClick={handleLocationClick} />
 
-        {/* Pedigree & Brand Clusters */}
+        {/* Pedigree & Brand Clusters - Enhanced */}
         <EmployerTierMapping tierData={employerTierData} onTierClick={handleTierClick} />
+      </div>
 
+      {/* Company & Skills Analysis */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Companies */}
         <TopCompanies topCompanies={topCompanies} onCompanyClick={handleCompanyClick} />
 
         {/* Skills Distribution */}
         <SkillsDistribution skillsData={skillsData} onSkillClick={handleSkillClick} />
+      </div>
 
+      {/* Workforce Composition */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Notice Period Distribution */}
         <NoticePeriod noticePeriod={noticePeriod} />
 
@@ -155,7 +162,7 @@ export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
         <DesignationSplit designationSplit={designationSplit} />
       </div>
 
-      {/* Department/Industry & Intent Analysis */}
+      {/* Advanced Analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Candidate Intent & Behaviour */}
         <CandidateIntent intentData={candidateIntentData} onIntentClick={handleIntentClick} />
