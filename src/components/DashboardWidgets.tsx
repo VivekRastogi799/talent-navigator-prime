@@ -1,4 +1,3 @@
-
 import { QuickStats } from "@/components/dashboard/QuickStats";
 import { TopCompanies } from "@/components/dashboard/TopCompanies";
 import { SkillsDistribution } from "@/components/dashboard/SkillsDistribution";
@@ -6,6 +5,10 @@ import { DesignationSplit } from "@/components/dashboard/DesignationSplit";
 import { NoticePeriod } from "@/components/dashboard/NoticePeriod";
 import { CtcVsExp } from "@/components/dashboard/CtcVsExp";
 import { SmartSummary } from "@/components/dashboard/SmartSummary";
+import { LocationDistribution } from "@/components/dashboard/LocationDistribution";
+import { EmployerTierMapping } from "@/components/dashboard/EmployerTierMapping";
+import { CompensationIntelligence } from "@/components/dashboard/CompensationIntelligence";
+import { CandidateIntent } from "@/components/dashboard/CandidateIntent";
 
 interface DashboardWidgetsProps {
   onDrilldown: (title: string, data: any[], type: 'companies' | 'skills' | 'locations' | 'candidates') => void;
@@ -64,6 +67,37 @@ export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
     { experience: 10, ctc: 26.8, candidates: 43 },
   ];
 
+  const locationData = [
+    { name: "Bangalore", count: 456, percentage: 36.6 },
+    { name: "Mumbai", count: 234, percentage: 18.8 },
+    { name: "Delhi NCR", count: 189, percentage: 15.2 },
+    { name: "Hyderabad", count: 167, percentage: 13.4 },
+    { name: "Chennai", count: 123, percentage: 9.9 },
+    { name: "Pune", count: 78, percentage: 6.3 },
+  ];
+
+  const employerTierData = [
+    { name: "FAANG", value: 28, color: "#3B82F6" },
+    { name: "Unicorn", value: 35, color: "#10B981" },
+    { name: "GCC", value: 22, color: "#F59E0B" },
+    { name: "Others", value: 15, color: "#6366F1" },
+  ];
+
+  const compensationData = [
+    { currentCtc: 12, expectedCtc: 18, candidates: 45, experience: 4 },
+    { currentCtc: 18, expectedCtc: 25, candidates: 67, experience: 6 },
+    { currentCtc: 25, expectedCtc: 35, candidates: 34, experience: 8 },
+    { currentCtc: 35, expectedCtc: 45, candidates: 23, experience: 10 },
+    { currentCtc: 45, expectedCtc: 60, candidates: 12, experience: 12 },
+  ];
+
+  const candidateIntentData = [
+    { category: "Last Seen", activeCount: 234, passiveCount: 123 },
+    { category: "Profile Views", activeCount: 189, passiveCount: 278 },
+    { category: "Job Applications", activeCount: 156, passiveCount: 89 },
+    { category: "Response Rate", activeCount: 98, passiveCount: 45 },
+  ];
+
   const handleCompanyClick = (company: any) => {
     onDrilldown(`${company.name} Candidates`, [], 'candidates');
   };
@@ -72,13 +106,25 @@ export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
     onDrilldown(`${skill.skill} Candidates`, [], 'candidates');
   };
 
+  const handleLocationClick = (location: any) => {
+    onDrilldown(`${location.name} Candidates`, [], 'candidates');
+  };
+
+  const handleTierClick = (tier: any) => {
+    onDrilldown(`${tier.name} Companies Candidates`, [], 'candidates');
+  };
+
+  const handleIntentClick = (intent: any) => {
+    onDrilldown(`${intent.category} Candidates`, [], 'candidates');
+  };
+
   const handleChartClick = () => {
     onDrilldown('Filtered Candidates', [], 'candidates');
   };
 
   return (
     <div className="space-y-6">
-      {/* Quick Stats */}
+      {/* Market Landscape - Quick Stats */}
       <QuickStats
         totalProfiles={quickStats.totalProfiles}
         medianCTC={quickStats.medianCTC}
@@ -90,21 +136,36 @@ export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
 
       {/* Main Widgets Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Geo + Availability Mapping */}
+        <LocationDistribution locationData={locationData} onLocationClick={handleLocationClick} />
+
+        {/* Pedigree & Brand Clusters */}
+        <EmployerTierMapping tierData={employerTierData} onTierClick={handleTierClick} />
+
         {/* Top Companies */}
         <TopCompanies topCompanies={topCompanies} onCompanyClick={handleCompanyClick} />
-
-        {/* Designation Split */}
-        <DesignationSplit designationSplit={designationSplit} />
 
         {/* Skills Distribution */}
         <SkillsDistribution skillsData={skillsData} onSkillClick={handleSkillClick} />
 
-        {/* Notice Period */}
+        {/* Notice Period Distribution */}
         <NoticePeriod noticePeriod={noticePeriod} />
+
+        {/* Designation Split */}
+        <DesignationSplit designationSplit={designationSplit} />
       </div>
 
-      {/* CTC vs Experience - Full Width */}
-      <CtcVsExp ctcVsExp={ctcVsExp} onChartClick={handleChartClick} />
+      {/* Department/Industry & Intent Analysis */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Candidate Intent & Behaviour */}
+        <CandidateIntent intentData={candidateIntentData} onIntentClick={handleIntentClick} />
+
+        {/* CTC vs Experience Analysis */}
+        <CtcVsExp ctcVsExp={ctcVsExp} onChartClick={handleChartClick} />
+      </div>
+
+      {/* Compensation Intelligence - Full Width */}
+      <CompensationIntelligence compensationData={compensationData} onChartClick={handleChartClick} />
 
       {/* Smart Summary Generator */}
       <SmartSummary />
