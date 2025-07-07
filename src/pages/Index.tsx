@@ -1,12 +1,13 @@
 
 import { useState } from "react";
-import { Search, Download, BookmarkPlus, Settings, User, Menu, X } from "lucide-react";
+import { Download, BookmarkPlus, Settings, User, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FilterSidebar } from "@/components/FilterSidebar";
+import { EnhancedFilterSidebar } from "@/components/EnhancedFilterSidebar";
 import { DashboardWidgets } from "@/components/DashboardWidgets";
 import { DrilldownPanel } from "@/components/DrilldownPanel";
 import { LandingPage } from "@/components/LandingPage";
+import { SearchWithSuggestions } from "@/components/SearchWithSuggestions";
+import { CustomReportFooter } from "@/components/CustomReportFooter";
 
 const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -18,8 +19,8 @@ const Index = () => {
     type: 'candidates' as 'companies' | 'skills' | 'locations' | 'candidates'
   });
 
-  const handleSearch = (query: string, type: 'jd' | 'skill') => {
-    console.log('Search:', query, type);
+  const handleSearch = (query: string) => {
+    console.log('Search:', query);
     setShowDashboard(true);
   };
 
@@ -29,7 +30,7 @@ const Index = () => {
   };
 
   if (!showDashboard) {
-    return <LandingPage onSearch={handleSearch} />;
+    return <LandingPage onSearch={(query, type) => handleSearch(query)} />;
   }
 
   return (
@@ -51,20 +52,12 @@ const Index = () => {
               className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent cursor-pointer"
               onClick={() => setShowDashboard(false)}
             >
-              NaukriX Premium
+              NaukriX
             </div>
           </div>
           
           {/* Center search */}
-          <div className="flex-1 max-w-2xl mx-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-              <Input
-                placeholder="Search by role, location, CTC, company..."
-                className="pl-10 bg-slate-50 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div>
-          </div>
+          <SearchWithSuggestions onSearch={handleSearch} />
           
           {/* Right actions */}
           <div className="flex items-center gap-3">
@@ -88,7 +81,7 @@ const Index = () => {
 
       <div className="flex min-h-[calc(100vh-80px)]">
         {/* Sidebar */}
-        <FilterSidebar isOpen={sidebarOpen} />
+        <EnhancedFilterSidebar isOpen={sidebarOpen} />
         
         {/* Main Content */}
         <main className={`flex-1 p-6 transition-all duration-300 ${sidebarOpen ? 'ml-80' : 'ml-0'} ${drilldownOpen ? 'mr-96' : 'mr-0'}`}>
@@ -97,7 +90,12 @@ const Index = () => {
             <p className="text-slate-600">Product Manager • Bangalore • 8-15 LPA</p>
           </div>
           
-          <DashboardWidgets onDrilldown={handleWidgetDrilldown} />
+          <div className="space-y-6">
+            <DashboardWidgets onDrilldown={handleWidgetDrilldown} />
+            
+            {/* Custom Report Footer */}
+            <CustomReportFooter />
+          </div>
         </main>
 
         {/* Drilldown Panel */}

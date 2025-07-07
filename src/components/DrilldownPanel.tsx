@@ -76,7 +76,7 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
   const [sortBy, setSortBy] = useState("relevance");
   const [searchTerm, setSearchTerm] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [showCandidates, setShowCandidates] = useState(false);
+  const [showCandidates, setShowCandidates] = useState(true); // Changed to true by default
 
   const handleDrilldownClick = () => {
     setModalOpen(true);
@@ -101,8 +101,16 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
             </Button>
           </div>
           
-          {/* Action Buttons */}
+          {/* Primary Action Buttons - View Candidates first */}
           <div className="flex gap-2 mb-3">
+            <Button 
+              onClick={() => setShowCandidates(true)}
+              size="sm" 
+              className="flex-1 bg-blue-600 hover:bg-blue-700"
+            >
+              <User className="h-4 w-4 mr-1" />
+              View Candidates
+            </Button>
             <Button 
               onClick={handleDrilldownClick}
               variant="outline" 
@@ -110,19 +118,11 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
               className="flex-1 border-blue-500 text-blue-600 hover:bg-blue-50"
             >
               <BarChart3 className="h-4 w-4 mr-1" />
-              Drill Down
-            </Button>
-            <Button 
-              onClick={() => setShowCandidates(true)}
-              size="sm" 
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
-            >
-              <User className="h-4 w-4 mr-1" />
-              View All
+              Deep Drill
             </Button>
           </div>
           
-          {/* Search and Sort */}
+          {/* Search and Sort - only show when viewing candidates */}
           {showCandidates && (
             <div className="space-y-3">
               <Input
@@ -155,7 +155,7 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {showCandidates ? (
-            // Show candidate list
+            // Show candidate list by default
             mockCandidates.map((candidate) => (
               <Card key={candidate.id} className="hover:shadow-md transition-shadow cursor-pointer">
                 <CardContent className="p-4">
@@ -219,34 +219,34 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
               </Card>
             ))
           ) : (
-            // Show initial drilldown options
+            // Show drilldown options if explicitly requested
             <div className="text-center py-8">
               <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-slate-800 mb-2">Choose Action</h3>
-              <p className="text-slate-600 mb-6">Select how you'd like to explore this data</p>
+              <h3 className="text-lg font-medium text-slate-800 mb-2">Analytical Deep Dive</h3>
+              <p className="text-slate-600 mb-6">Explore detailed insights and patterns</p>
               
               <div className="space-y-3">
                 <Button 
                   onClick={handleDrilldownClick}
-                  variant="outline" 
-                  className="w-full border-blue-500 text-blue-600 hover:bg-blue-50"
+                  className="w-full bg-blue-600 hover:bg-blue-700"
                 >
                   <BarChart3 className="h-4 w-4 mr-2" />
-                  Detailed Analysis & Drill Down
+                  Launch Deep Analysis
                 </Button>
                 <Button 
                   onClick={() => setShowCandidates(true)}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  variant="outline" 
+                  className="w-full border-green-500 text-green-600 hover:bg-green-50"
                 >
                   <User className="h-4 w-4 mr-2" />
-                  View Candidate List
+                  Back to Candidate List
                 </Button>
               </div>
             </div>
           )}
         </div>
 
-        {/* Footer */}
+        {/* Footer - only show when viewing candidates */}
         {showCandidates && (
           <div className="p-4 border-t border-slate-200 bg-slate-50">
             <div className="flex gap-2">

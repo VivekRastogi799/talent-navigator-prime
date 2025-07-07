@@ -1,4 +1,3 @@
-
 import { QuickStats } from "@/components/dashboard/QuickStats";
 import { TopCompanies } from "@/components/dashboard/TopCompanies";
 import { SkillsDistribution } from "@/components/dashboard/SkillsDistribution";
@@ -17,86 +16,103 @@ interface DashboardWidgetsProps {
 
 export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
   const quickStats = {
-    totalProfiles: 1247,
-    medianCTC: "12.5L",
-    activePercent: 68,
-    femalePercent: 34,
-    avgAvailability: "45 days"
+    totalProfiles: 2847,
+    medianCTC: "18.2L",
+    activePercent: 72,
+    femalePercent: 37,
+    avgAvailability: "42 days"
   };
 
   const topCompanies = [
-    { name: "Google", count: 89, percentage: 7.1 },
-    { name: "Microsoft", count: 76, percentage: 6.1 },
-    { name: "Amazon", count: 67, percentage: 5.4 },
-    { name: "Flipkart", count: 54, percentage: 4.3 },
-    { name: "Swiggy", count: 43, percentage: 3.4 },
+    { name: "Google", count: 156, percentage: 5.5 },
+    { name: "Microsoft", count: 142, percentage: 5.0 },
+    { name: "Amazon", count: 134, percentage: 4.7 },
+    { name: "Meta", count: 98, percentage: 3.4 },
+    { name: "Netflix", count: 67, percentage: 2.4 },
+    { name: "Apple", count: 54, percentage: 1.9 },
+    { name: "Flipkart", count: 145, percentage: 5.1 },
+    { name: "Swiggy", count: 123, percentage: 4.3 },
+    { name: "Zomato", count: 98, percentage: 3.4 },
+    { name: "PhonePe", count: 87, percentage: 3.1 },
   ];
 
   const designationSplit = [
-    { name: "Senior PM", value: 42, color: "#3B82F6" },
-    { name: "Product Manager", value: 38, color: "#10B981" },
+    { name: "Senior PM", value: 45, color: "#3B82F6" },
+    { name: "Product Manager", value: 35, color: "#10B981" },
     { name: "Associate PM", value: 20, color: "#F59E0B" },
   ];
 
   const skillsData = [
-    { skill: "Product Strategy", count: 892, size: 24 },
-    { skill: "Data Analytics", count: 743, size: 20 },
-    { skill: "A/B Testing", count: 634, size: 18 },
-    { skill: "SQL", count: 567, size: 16 },
-    { skill: "User Research", count: 445, size: 14 },
-    { skill: "Agile/Scrum", count: 423, size: 13 },
-    { skill: "Figma", count: 334, size: 12 },
-    { skill: "Python", count: 267, size: 11 },
+    { skill: "Product Strategy", count: 1892, size: 28 },
+    { skill: "Data Analytics", count: 1743, size: 26 },
+    { skill: "A/B Testing", count: 1534, size: 24 },
+    { skill: "SQL", count: 1367, size: 22 },
+    { skill: "User Research", count: 1245, size: 20 },
+    { skill: "Agile/Scrum", count: 1123, size: 18 },
+    { skill: "Figma", count: 934, size: 16 },
+    { skill: "Python", count: 867, size: 14 },
+    { skill: "Tableau", count: 756, size: 12 },
+    { skill: "Market Research", count: 645, size: 11 },
+    { skill: "Competitive Analysis", count: 567, size: 10 },
+    { skill: "Roadmap Planning", count: 489, size: 9 },
   ];
 
   const noticePeriod = [
-    { name: "Immediate", value: 12, color: "#EF4444" },
-    { name: "15 days", value: 18, color: "#F97316" },
-    { name: "1 month", value: 35, color: "#EAB308" },
-    { name: "2 months", value: 25, color: "#22C55E" },
+    { name: "Immediate", value: 15, color: "#EF4444" },
+    { name: "15 days", value: 22, color: "#F97316" },
+    { name: "1 month", value: 32, color: "#EAB308" },
+    { name: "2 months", value: 21, color: "#22C55E" },
     { name: "3+ months", value: 10, color: "#6366F1" },
   ];
 
   const ctcVsExp = [
-    { experience: 3, ctc: 8.5, candidates: 45 },
-    { experience: 4, ctc: 10.2, candidates: 67 },
-    { experience: 5, ctc: 12.8, candidates: 89 },
-    { experience: 6, ctc: 15.1, candidates: 123 },
-    { experience: 7, ctc: 17.5, candidates: 98 },
-    { experience: 8, ctc: 20.2, candidates: 76 },
-    { experience: 9, ctc: 23.1, candidates: 54 },
-    { experience: 10, ctc: 26.8, candidates: 43 },
+    { experience: 2, ctc: 6.5, candidates: 67 },
+    { experience: 3, ctc: 8.5, candidates: 89 },
+    { experience: 4, ctc: 11.2, candidates: 156 },
+    { experience: 5, ctc: 13.8, candidates: 234 },
+    { experience: 6, ctc: 16.1, candidates: 298 },
+    { experience: 7, ctc: 18.5, candidates: 345 },
+    { experience: 8, ctc: 21.2, candidates: 287 },
+    { experience: 9, ctc: 24.1, candidates: 198 },
+    { experience: 10, ctc: 27.8, candidates: 156 },
+    { experience: 11, ctc: 31.2, candidates: 123 },
+    { experience: 12, ctc: 35.5, candidates: 89 },
   ];
 
   const locationData = [
-    { name: "Bangalore", count: 456, percentage: 36.6 },
-    { name: "Mumbai", count: 234, percentage: 18.8 },
-    { name: "Delhi NCR", count: 189, percentage: 15.2 },
-    { name: "Hyderabad", count: 167, percentage: 13.4 },
-    { name: "Chennai", count: 123, percentage: 9.9 },
-    { name: "Pune", count: 78, percentage: 6.3 },
+    { name: "Bangalore", count: 856, percentage: 30.1 },
+    { name: "Mumbai", count: 534, percentage: 18.8 },
+    { name: "Delhi NCR", count: 456, percentage: 16.0 },
+    { name: "Hyderabad", count: 378, percentage: 13.3 },
+    { name: "Chennai", count: 289, percentage: 10.2 },
+    { name: "Pune", count: 198, percentage: 7.0 },
+    { name: "Kolkata", count: 89, percentage: 3.1 },
+    { name: "Ahmedabad", count: 47, percentage: 1.7 },
   ];
 
   const employerTierData = [
-    { name: "FAANG", value: 28, color: "#3B82F6" },
-    { name: "Unicorn", value: 35, color: "#10B981" },
-    { name: "GCC", value: 22, color: "#F59E0B" },
+    { name: "FAANG", value: 32, color: "#3B82F6" },
+    { name: "Unicorn", value: 28, color: "#10B981" },
+    { name: "GCC", value: 25, color: "#F59E0B" },
     { name: "Others", value: 15, color: "#6366F1" },
   ];
 
   const compensationData = [
-    { currentCtc: 12, expectedCtc: 18, candidates: 45, experience: 4 },
-    { currentCtc: 18, expectedCtc: 25, candidates: 67, experience: 6 },
-    { currentCtc: 25, expectedCtc: 35, candidates: 34, experience: 8 },
-    { currentCtc: 35, expectedCtc: 45, candidates: 23, experience: 10 },
-    { currentCtc: 45, expectedCtc: 60, candidates: 12, experience: 12 },
+    { currentCtc: 8, expectedCtc: 12, candidates: 89, experience: 3 },
+    { currentCtc: 12, expectedCtc: 18, candidates: 156, experience: 4 },
+    { currentCtc: 16, expectedCtc: 22, candidates: 234, experience: 5 },
+    { currentCtc: 20, expectedCtc: 28, candidates: 198, experience: 6 },
+    { currentCtc: 25, expectedCtc: 35, candidates: 145, experience: 7 },
+    { currentCtc: 30, expectedCtc: 42, candidates: 98, experience: 8 },
+    { currentCtc: 35, expectedCtc: 50, candidates: 67, experience: 9 },
+    { currentCtc: 40, expectedCtc: 60, candidates: 45, experience: 10 },
   ];
 
   const candidateIntentData = [
-    { category: "Last Seen", activeCount: 234, passiveCount: 123 },
-    { category: "Profile Views", activeCount: 189, passiveCount: 278 },
-    { category: "Job Applications", activeCount: 156, passiveCount: 89 },
-    { category: "Response Rate", activeCount: 98, passiveCount: 45 },
+    { category: "Last Seen", activeCount: 534, passiveCount: 323 },
+    { category: "Profile Views", activeCount: 456, passiveCount: 578 },
+    { category: "Job Applications", activeCount: 356, passiveCount: 189 },
+    { category: "Response Rate", activeCount: 298, passiveCount: 145 },
   ];
 
   const handleCompanyClick = (company: any) => {
