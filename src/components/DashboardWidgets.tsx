@@ -24,16 +24,16 @@ export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
   };
 
   const topCompanies = [
-    { name: "Google", count: 156, percentage: 5.5 },
-    { name: "Microsoft", count: 142, percentage: 5.0 },
-    { name: "Amazon", count: 134, percentage: 4.7 },
-    { name: "Meta", count: 98, percentage: 3.4 },
-    { name: "Netflix", count: 67, percentage: 2.4 },
-    { name: "Apple", count: 54, percentage: 1.9 },
-    { name: "Flipkart", count: 145, percentage: 5.1 },
-    { name: "Swiggy", count: 123, percentage: 4.3 },
-    { name: "Zomato", count: 98, percentage: 3.4 },
-    { name: "PhonePe", count: 87, percentage: 3.1 },
+    { name: "Google", count: 189, percentage: 6.6 },
+    { name: "Microsoft", count: 176, percentage: 6.2 },
+    { name: "Amazon", count: 167, percentage: 5.9 },
+    { name: "Meta", count: 134, percentage: 4.7 },
+    { name: "Netflix", count: 89, percentage: 3.1 },
+    { name: "Apple", count: 78, percentage: 2.7 },
+    { name: "Flipkart", count: 154, percentage: 5.4 },
+    { name: "Swiggy", count: 143, percentage: 5.0 },
+    { name: "Zomato", count: 128, percentage: 4.5 },
+    { name: "PhonePe", count: 112, percentage: 3.9 },
   ];
 
   const designationSplit = [
@@ -66,17 +66,20 @@ export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
   ];
 
   const ctcVsExp = [
-    { experience: 2, ctc: 6.5, candidates: 67 },
-    { experience: 3, ctc: 8.5, candidates: 89 },
-    { experience: 4, ctc: 11.2, candidates: 156 },
-    { experience: 5, ctc: 13.8, candidates: 234 },
-    { experience: 6, ctc: 16.1, candidates: 298 },
-    { experience: 7, ctc: 18.5, candidates: 345 },
-    { experience: 8, ctc: 21.2, candidates: 287 },
-    { experience: 9, ctc: 24.1, candidates: 198 },
-    { experience: 10, ctc: 27.8, candidates: 156 },
-    { experience: 11, ctc: 31.2, candidates: 123 },
-    { experience: 12, ctc: 35.5, candidates: 89 },
+    { experience: 2, ctc: 6.5, candidates: 167 },
+    { experience: 3, ctc: 8.5, candidates: 289 },
+    { experience: 4, ctc: 11.2, candidates: 356 },
+    { experience: 5, ctc: 13.8, candidates: 434 },
+    { experience: 6, ctc: 16.1, candidates: 498 },
+    { experience: 7, ctc: 18.5, candidates: 545 },
+    { experience: 8, ctc: 21.2, candidates: 487 },
+    { experience: 9, ctc: 24.1, candidates: 398 },
+    { experience: 10, ctc: 27.8, candidates: 356 },
+    { experience: 11, ctc: 31.2, candidates: 323 },
+    { experience: 12, ctc: 35.5, candidates: 289 },
+    { experience: 13, ctc: 40.2, candidates: 234 },
+    { experience: 14, ctc: 45.8, candidates: 198 },
+    { experience: 15, ctc: 52.3, candidates: 167 },
   ];
 
   const locationData = [
@@ -98,14 +101,16 @@ export const DashboardWidgets = ({ onDrilldown }: DashboardWidgetsProps) => {
   ];
 
   const compensationData = [
-    { currentCtc: 8, expectedCtc: 12, candidates: 89, experience: 3 },
-    { currentCtc: 12, expectedCtc: 18, candidates: 156, experience: 4 },
-    { currentCtc: 16, expectedCtc: 22, candidates: 234, experience: 5 },
-    { currentCtc: 20, expectedCtc: 28, candidates: 198, experience: 6 },
-    { currentCtc: 25, expectedCtc: 35, candidates: 145, experience: 7 },
-    { currentCtc: 30, expectedCtc: 42, candidates: 98, experience: 8 },
-    { currentCtc: 35, expectedCtc: 50, candidates: 67, experience: 9 },
-    { currentCtc: 40, expectedCtc: 60, candidates: 45, experience: 10 },
+    { currentCtc: 8, expectedCtc: 12, candidates: 189, experience: 3 },
+    { currentCtc: 12, expectedCtc: 18, candidates: 256, experience: 4 },
+    { currentCtc: 16, expectedCtc: 22, candidates: 334, experience: 5 },
+    { currentCtc: 20, expectedCtc: 28, candidates: 298, experience: 6 },
+    { currentCtc: 25, expectedCtc: 35, candidates: 245, experience: 7 },
+    { currentCtc: 30, expectedCtc: 42, candidates: 198, experience: 8 },
+    { currentCtc: 35, expectedCtc: 50, candidates: 167, experience: 9 },
+    { currentCtc: 40, expectedCtc: 60, candidates: 145, experience: 10 },
+    { currentCtc: 45, expectedCtc: 70, candidates: 123, experience: 11 },
+    { currentCtc: 50, expectedCtc: 80, candidates: 98, experience: 12 },
   ];
 
   const candidateIntentData = [

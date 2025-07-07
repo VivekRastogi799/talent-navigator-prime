@@ -1,8 +1,9 @@
 
 import { useState, useRef, useEffect } from "react";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface SearchSuggestion {
   text: string;
@@ -16,6 +17,7 @@ interface SearchWithSuggestionsProps {
 
 export const SearchWithSuggestions = ({ onSearch }: SearchWithSuggestionsProps) => {
   const [query, setQuery] = useState("");
+  const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -28,25 +30,33 @@ export const SearchWithSuggestions = ({ onSearch }: SearchWithSuggestionsProps) 
     { text: "Product Owner", category: "role", count: 156 },
     { text: "Product Strategy", category: "skill", count: 743 },
     { text: "Product Analytics", category: "skill", count: 567 },
-    { text: "Google", category: "company", count: 89 },
-    { text: "Microsoft", category: "company", count: 76 },
-    { text: "Amazon", category: "company", count: 67 },
-    { text: "Bangalore", category: "location", count: 456 },
-    { text: "Mumbai", category: "location", count: 234 },
-    { text: "Delhi NCR", category: "location", count: 189 }
+    { text: "Product Development", category: "skill", count: 445 },
+    { text: "Roadmap Planning", category: "skill", count: 389 },
+    { text: "A/B Testing", category: "skill", count: 334 },
+    { text: "Google", category: "company", count: 189 },
+    { text: "Microsoft", category: "company", count: 176 },
+    { text: "Amazon", category: "company", count: 167 },
+    { text: "Meta", category: "company", count: 134 },
+    { text: "Netflix", category: "company", count: 89 },
+    { text: "Bangalore", category: "location", count: 856 },
+    { text: "Mumbai", category: "location", count: 534 },
+    { text: "Delhi NCR", category: "location", count: 456 },
+    { text: "Hyderabad", category: "location", count: 378 },
+    { text: "Chennai", category: "location", count: 289 }
   ];
 
   useEffect(() => {
     if (query.length > 0) {
       const filtered = mockSuggestions.filter(s => 
-        s.text.toLowerCase().includes(query.toLowerCase())
+        s.text.toLowerCase().includes(query.toLowerCase()) &&
+        !selectedKeywords.includes(s.text)
       );
-      setSuggestions(filtered);
+      setSuggestions(filtered.slice(0, 8));
       setShowSuggestions(true);
     } else {
       setShowSuggestions(false);
     }
-  }, [query]);
+  }, [query, selectedKeywords]);
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -58,30 +68,67 @@ export const SearchWithSuggestions = ({ onSearch }: SearchWithSuggestionsProps) 
     }
   };
 
+  const addKeyword = (keyword: string) => {
+    if (!selectedKeywords.includes(keyword)) {
+      const newKeywords = [...selectedKeywords, keyword];
+      setSelectedKeywords(newKeywords);
+      setQuery("");
+      setShowSuggestions(false);
+      onSearch(newKeywords.join(", "));
+    }
+  };
+
+  const removeKeyword = (keyword: string) => {
+    const newKeywords = selectedKeywords.filter(k => k !== keyword);
+    setSelectedKeywords(newKeywords);
+    onSearch(newKeywords.join(", "));
+  };
+
   const handleSuggestionClick = (suggestion: SearchSuggestion) => {
-    setQuery(suggestion.text);
-    setShowSuggestions(false);
-    onSearch(suggestion.text);
+    addKeyword(suggestion.text);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && query.trim()) {
+      addKeyword(query.trim());
+    }
   };
 
   const handleSearch = () => {
-    onSearch(query);
-    setShowSuggestions(false);
+    if (query.trim()) {
+      addKeyword(query.trim());
+    } else if (selectedKeywords.length > 0) {
+      onSearch(selectedKeywords.join(", "));
+    }
   };
 
   return (
     <div className="relative flex-1 max-w-2xl mx-8">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-        <Input
-          ref={inputRef}
-          placeholder="Search by role, location, CTC, company..."
-          className="pl-10 pr-10 bg-slate-50 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-          onFocus={() => query.length > 0 && setShowSuggestions(true)}
-        />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4 z-10" />
+        
+        {/* Selected Keywords */}
+        <div className="flex flex-wrap gap-2 pl-10 pr-20 py-2 min-h-[42px] bg-slate-50 border border-slate-200 rounded-lg focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+          {selectedKeywords.map((keyword, index) => (
+            <Badge key={index} variant="secondary" className="flex items-center gap-1">
+              {keyword}
+              <X 
+                className="h-3 w-3 cursor-pointer hover:text-red-500" 
+                onClick={() => removeKeyword(keyword)}
+              />
+            </Badge>
+          ))}
+          <Input
+            ref={inputRef}
+            placeholder={selectedKeywords.length === 0 ? "Search by role, location, CTC, company..." : "Add more keywords..."}
+            className="border-0 bg-transparent shadow-none focus-visible:ring-0 flex-1 min-w-[200px] p-0"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyPress={handleKeyPress}
+            onFocus={() => query.length > 0 && setShowSuggestions(true)}
+          />
+        </div>
+        
         <Button
           onClick={handleSearch}
           size="sm"
