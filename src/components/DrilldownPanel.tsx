@@ -1,12 +1,13 @@
 
 import { useState } from "react";
-import { X, Filter, SortAsc, BarChart3 } from "lucide-react";
+import { X, Filter, SortAsc, BarChart3, Expand, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DrilldownModal } from "./DrilldownModal";
 import { CandidateCard } from "./candidate/CandidateCard";
 import { CandidateDeepDive } from "./candidate/CandidateDeepDive";
+import { ExpandedCandidateView } from "./candidate/ExpandedCandidateView";
 
 interface DrilldownPanelProps {
   isOpen: boolean;
@@ -144,6 +145,7 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
   const [showCandidates, setShowCandidates] = useState(true);
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
   const [deepDiveOpen, setDeepDiveOpen] = useState(false);
+  const [expandedViewOpen, setExpandedViewOpen] = useState(false);
   const [unlocksLeft, setUnlocksLeft] = useState(5);
 
   const handleDrilldownClick = () => {
@@ -178,6 +180,10 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
     console.log('Shortlisting candidate:', candidateId);
   };
 
+  const handleExpandView = () => {
+    setExpandedViewOpen(true);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -199,16 +205,24 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
               size="sm" 
               className="flex-1 bg-blue-600 hover:bg-blue-700"
             >
-              View Candidates ({mockCandidates.length})
+              <Users className="h-4 w-4 mr-1" />
+              View ({mockCandidates.length})
+            </Button>
+            <Button 
+              onClick={handleExpandView}
+              variant="outline" 
+              size="sm" 
+              className="border-green-500 text-green-600 hover:bg-green-50"
+            >
+              <Expand className="h-4 w-4" />
             </Button>
             <Button 
               onClick={handleDrilldownClick}
               variant="outline" 
               size="sm" 
-              className="flex-1 border-blue-500 text-blue-600 hover:bg-blue-50"
+              className="border-blue-500 text-blue-600 hover:bg-blue-50"
             >
-              <BarChart3 className="h-4 w-4 mr-1" />
-              Deep Drill
+              <BarChart3 className="h-4 w-4" />
             </Button>
           </div>
           
@@ -297,6 +311,15 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
         data={data}
         type={type === 'locations' ? 'location' : type === 'companies' ? 'company' : 'skill'}
         onViewCandidates={handleViewCandidates}
+      />
+
+      {/* Expanded Candidate View */}
+      <ExpandedCandidateView
+        isOpen={expandedViewOpen}
+        onClose={() => setExpandedViewOpen(false)}
+        candidates={mockCandidates}
+        title={title}
+        searchQuery={searchTerm}
       />
 
       {/* Deep Dive Modal */}

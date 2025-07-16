@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { ChevronDown, ChevronUp, Search, Building, MapPin, Users, DollarSign, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Search, Building, MapPin, Users, DollarSign, X, Clock, Target, Award, Briefcase } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 interface EnhancedFilterSidebarProps {
   isOpen: boolean;
@@ -19,86 +20,112 @@ const initialLocations = [
   "Bangalore", "Hyderabad", "Mumbai", "Delhi", "Chennai", "Pune", "Kolkata"
 ];
 
-const companyTierGroups = {
-  "Tier 1": ["Google", "Microsoft", "Amazon", "Facebook", "Apple"],
-  "Tier 2": ["Infosys", "TCS", "Wipro", "HCL", "Accenture"],
-  "Startups": ["Ola", "Uber", "Airbnb", "SpaceX", "Byju's"]
+const filterCategories = {
+  "Company Type": {
+    icon: Building,
+    groups: {
+      "FAANG": { items: ["Google", "Meta", "Amazon", "Apple", "Netflix"], count: 1250 },
+      "Unicorns": { items: ["Flipkart", "Paytm", "Ola", "Swiggy", "Zomato"], count: 890 },
+      "Product Companies": { items: ["Microsoft", "Adobe", "Salesforce", "Uber"], count: 675 },
+      "Services": { items: ["TCS", "Infosys", "Wipro", "Accenture"], count: 2340 }
+    }
+  },
+  "Experience": {
+    icon: Award,
+    groups: {
+      "Entry Level": { items: ["0-2 years"], count: 450 },
+      "Mid Level": { items: ["3-5 years"], count: 820 },
+      "Senior Level": { items: ["6-10 years"], count: 650 },
+      "Leadership": { items: ["10+ years"], count: 280 }
+    }
+  },
+  "Work Mode": {
+    icon: Target,
+    groups: {
+      "Remote": { items: ["Fully Remote"], count: 320 },
+      "Hybrid": { items: ["2-3 days office"], count: 560 },
+      "On-site": { items: ["Office based"], count: 1120 }
+    }
+  },
+  "Notice Period": {
+    icon: Clock,
+    groups: {
+      "Immediate": { items: ["0-15 days"], count: 180 },
+      "Short": { items: ["16-30 days"], count: 420 },
+      "Standard": { items: ["1-2 months"], count: 890 },
+      "Long": { items: ["3+ months"], count: 510 }
+    }
+  }
 };
 
 const companySizes: CompanySize[] = [
-  { name: "1-10", count: 120 },
-  { name: "11-50", count: 345 },
-  { name: "51-200", count: 678 },
-  { name: "201-500", count: 456 },
-  { name: "501-1000", count: 321 },
-  { name: "1001+", count: 987 }
+  { name: "Startup (1-50)", count: 465 },
+  { name: "Mid-size (51-500)", count: 1134 },
+  { name: "Large (501-5000)", count: 777 },
+  { name: "Enterprise (5000+)", count: 1624 }
+];
+
+const salaryRanges = [
+  { range: "0-10 LPA", count: 580 },
+  { range: "10-20 LPA", count: 920 },
+  { range: "20-35 LPA", count: 650 },
+  { range: "35-50 LPA", count: 380 },
+  { range: "50+ LPA", count: 170 }
 ];
 
 export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-  const [selectedCompanyTiers, setSelectedCompanyTiers] = useState<string[]>([]);
   const [selectedCompanySizes, setSelectedCompanySizes] = useState<string[]>([]);
+  const [selectedSalaryRanges, setSelectedSalaryRanges] = useState<string[]>([]);
   const [expandedSections, setExpandedSections] = useState({
-    companyTiers: true,
-    companySize: true,
-    locations: false,
+    companyType: true,
+    experience: true,
+    workMode: false,
+    noticePeriod: false,
+    location: false,
+    companySize: false,
     salary: false
   });
 
-  const handleLocationToggle = (location: string) => {
-    setSelectedLocations(prev =>
-      prev.includes(location) ? prev.filter(l => l !== location) : [...prev, location]
-    );
+  const handleFilterToggle = (category: string, item: string) => {
+    setSelectedFilters(prev => {
+      const current = prev[category] || [];
+      const updated = current.includes(item)
+        ? current.filter(i => i !== item)
+        : [...current, item];
+      return { ...prev, [category]: updated };
+    });
   };
 
-  const handleSalaryRangeChange = (range: string) => {
-    // Placeholder for salary range selection logic
-    console.log("Selected salary range:", range);
-  };
-
-  const handleGroupToggle = (group: string, items: string[]) => {
-    const checkboxRef = useRef<HTMLInputElement>(null);
-    const allSelected = items.every(item => 
-      group === 'companies' ? selectedCompanies.includes(item) :
-      group === 'companyTiers' ? selectedCompanyTiers.includes(item) :
-      selectedCompanySizes.includes(item)
-    );
+  const handleGroupToggle = (category: string, groupName: string, items: string[]) => {
+    const current = selectedFilters[category] || [];
+    const allSelected = items.every(item => current.includes(item));
     
-    const someSelected = items.some(item => 
-      group === 'companies' ? selectedCompanies.includes(item) :
-      group === 'companyTiers' ? selectedCompanyTiers.includes(item) :
-      selectedCompanySizes.includes(item)
-    );
-
-    // Set checkbox state
-    useEffect(() => {
-      if (checkboxRef.current) {
-        checkboxRef.current.checked = allSelected;
-        checkboxRef.current.indeterminate = someSelected && !allSelected;
-      }
-    }, [allSelected, someSelected]);
-
     if (allSelected) {
       // Deselect all
-      if (group === 'companies') {
-        setSelectedCompanies(prev => prev.filter(item => !items.includes(item)));
-      } else if (group === 'companyTiers') {
-        setSelectedCompanyTiers(prev => prev.filter(item => !items.includes(item)));
-      } else {
-        setSelectedCompanySizes(prev => prev.filter(item => !items.includes(item)));
-      }
+      setSelectedFilters(prev => ({
+        ...prev,
+        [category]: current.filter(item => !items.includes(item))
+      }));
     } else {
       // Select all
-      if (group === 'companies') {
-        setSelectedCompanies(prev => [...new Set([...prev, ...items])]);
-      } else if (group === 'companyTiers') {
-        setSelectedCompanyTiers(prev => [...new Set([...prev, ...items])]);
-      } else {
-        setSelectedCompanySizes(prev => [...new Set([...prev, ...items])]);
-      }
+      setSelectedFilters(prev => ({
+        ...prev,
+        [category]: [...new Set([...current, ...items])]
+      }));
     }
+  };
+
+  const getAllSelectedFilters = () => {
+    const all = [
+      ...Object.values(selectedFilters).flat(),
+      ...selectedLocations,
+      ...selectedCompanySizes,
+      ...selectedSalaryRanges
+    ];
+    return all;
   };
 
   if (!isOpen) return null;
@@ -121,31 +148,42 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
         </div>
 
         {/* Active Filters */}
-        {(selectedCompanies.length > 0 || selectedLocations.length > 0 || selectedCompanyTiers.length > 0 || selectedCompanySizes.length > 0) && (
+        {getAllSelectedFilters().length > 0 && (
           <div className="space-y-2">
-            <div className="text-sm font-medium text-slate-600">Active Filters</div>
-            <div className="flex flex-wrap gap-1">
-              {selectedCompanies.map(company => (
-                <Badge key={company} variant="secondary" className="text-xs">
-                  {company}
-                  <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => 
-                    setSelectedCompanies(prev => prev.filter(c => c !== company))
-                  } />
-                </Badge>
-              ))}
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-medium text-slate-600">
+                Active Filters ({getAllSelectedFilters().length})
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => {
+                  setSelectedFilters({});
+                  setSelectedLocations([]);
+                  setSelectedCompanySizes([]);
+                  setSelectedSalaryRanges([]);
+                }}
+                className="text-xs text-red-600 hover:text-red-700"
+              >
+                Clear All
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-1 max-h-20 overflow-y-auto">
+              {Object.entries(selectedFilters).flatMap(([category, items]) =>
+                items.map(item => (
+                  <Badge key={`${category}-${item}`} variant="secondary" className="text-xs">
+                    {item}
+                    <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => 
+                      handleFilterToggle(category, item)
+                    } />
+                  </Badge>
+                ))
+              )}
               {selectedLocations.map(location => (
                 <Badge key={location} variant="secondary" className="text-xs">
                   {location}
                   <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => 
                     setSelectedLocations(prev => prev.filter(l => l !== location))
-                  } />
-                </Badge>
-              ))}
-              {selectedCompanyTiers.map(tier => (
-                <Badge key={tier} variant="secondary" className="text-xs">
-                  {tier}
-                  <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => 
-                    setSelectedCompanyTiers(prev => prev.filter(t => t !== tier))
                   } />
                 </Badge>
               ))}
@@ -157,57 +195,89 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
                   } />
                 </Badge>
               ))}
+              {selectedSalaryRanges.map(range => (
+                <Badge key={range} variant="secondary" className="text-xs">
+                  {range}
+                  <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => 
+                    setSelectedSalaryRanges(prev => prev.filter(r => r !== range))
+                  } />
+                </Badge>
+              ))}
             </div>
           </div>
         )}
       </div>
 
       {/* Filters Content */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* Company Tiers */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Building className="h-4 w-4" />
-              Company Tiers
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setExpandedSections(prev => ({
-                  ...prev,
-                  companyTiers: !prev.companyTiers
-                }))}
-              >
-                {expandedSections.companyTiers ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </Button>
-            </CardTitle>
-          </CardHeader>
-          {expandedSections.companyTiers && (
-            <CardContent className="pt-0 space-y-3">
-              {Object.entries(companyTierGroups).map(([tierName, companies]) => (
-                <div key={tierName} className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      ref={useRef<HTMLInputElement>(null)}
-                      className="rounded"
-                      onChange={() => handleGroupToggle('companyTiers', [tierName])}
-                    />
-                    <label className="text-sm font-medium text-slate-700">{tierName}</label>
-                    <span className="text-xs text-slate-500">({companies.length})</span>
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {/* Dynamic Filter Categories */}
+        {Object.entries(filterCategories).map(([categoryName, category]) => {
+          const Icon = category.icon;
+          const sectionKey = categoryName.toLowerCase().replace(' ', '');
+          
+          return (
+            <Card key={categoryName} className="border-slate-100">
+              <CardHeader className="pb-2 pt-3">
+                <CardTitle className="text-sm font-medium flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Icon className="h-4 w-4 text-slate-600" />
+                    {categoryName}
                   </div>
-                </div>
-              ))}
-            </CardContent>
-          )}
-        </Card>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setExpandedSections(prev => ({
+                      ...prev,
+                      [sectionKey]: !prev[sectionKey as keyof typeof expandedSections]
+                    }))}
+                  >
+                    {expandedSections[sectionKey as keyof typeof expandedSections] ? 
+                      <ChevronUp className="h-4 w-4" /> : 
+                      <ChevronDown className="h-4 w-4" />
+                    }
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              {expandedSections[sectionKey as keyof typeof expandedSections] && (
+                <CardContent className="pt-0 space-y-3">
+                  {Object.entries(category.groups).map(([groupName, group]) => {
+                    const selectedItems = selectedFilters[categoryName] || [];
+                    const allSelected = group.items.every(item => selectedItems.includes(item));
+                    const someSelected = group.items.some(item => selectedItems.includes(item));
+                    
+                    return (
+                      <div key={groupName} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              checked={allSelected}
+                              onCheckedChange={() => handleGroupToggle(categoryName, groupName, group.items)}
+                            />
+                            <label className="text-sm font-medium text-slate-700">{groupName}</label>
+                          </div>
+                          <span className="text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                            {group.count}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </CardContent>
+              )}
+            </Card>
+          );
+        })}
+
+        <Separator className="my-2" />
 
         {/* Company Size */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Company Size
+        <Card className="border-slate-100">
+          <CardHeader className="pb-2 pt-3">
+            <CardTitle className="text-sm font-medium flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Briefcase className="h-4 w-4 text-slate-600" />
+                Company Size
+              </div>
               <Button
                 variant="ghost"
                 size="sm"
@@ -223,19 +293,23 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
           {expandedSections.companySize && (
             <CardContent className="pt-0 space-y-2">
               {companySizes.map(size => (
-                <div key={size.name} className="flex items-center space-x-2">
-                  <Checkbox
-                    checked={selectedCompanySizes.includes(size.name)}
-                    onCheckedChange={(checked) => {
-                      if (checked) {
-                        setSelectedCompanySizes(prev => [...prev, size.name]);
-                      } else {
-                        setSelectedCompanySizes(prev => prev.filter(s => s !== size.name));
-                      }
-                    }}
-                  />
-                  <label className="text-sm text-slate-700">{size.name}</label>
-                  <span className="text-xs text-slate-500">({size.count})</span>
+                <div key={size.name} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      checked={selectedCompanySizes.includes(size.name)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSelectedCompanySizes(prev => [...prev, size.name]);
+                        } else {
+                          setSelectedCompanySizes(prev => prev.filter(s => s !== size.name));
+                        }
+                      }}
+                    />
+                    <label className="text-sm text-slate-700">{size.name}</label>
+                  </div>
+                  <span className="text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                    {size.count}
+                  </span>
                 </div>
               ))}
             </CardContent>
@@ -243,38 +317,45 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
         </Card>
 
         {/* Locations */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
-              Locations
+        <Card className="border-slate-100">
+          <CardHeader className="pb-2 pt-3">
+            <CardTitle className="text-sm font-medium flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-slate-600" />
+                Location
+              </div>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setExpandedSections(prev => ({
                   ...prev,
-                  locations: !prev.locations
+                  location: !prev.location
                 }))}
               >
-                {expandedSections.locations ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                {expandedSections.location ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </Button>
             </CardTitle>
           </CardHeader>
-          {expandedSections.locations && (
+          {expandedSections.location && (
             <CardContent className="pt-0 space-y-2">
-              {initialLocations.map(location => (
-                <div key={location} className="flex items-center space-x-2">
-                  <Checkbox
-                    checked={selectedLocations.includes(location)}
-                    onCheckedChange={(checked) => {
-                      if (checked) {
-                        setSelectedLocations(prev => [...prev, location]);
-                      } else {
-                        setSelectedLocations(prev => prev.filter(l => l !== location));
-                      }
-                    }}
-                  />
-                  <label className="text-sm text-slate-700">{location}</label>
+              {initialLocations.map((location, index) => (
+                <div key={location} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      checked={selectedLocations.includes(location)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSelectedLocations(prev => [...prev, location]);
+                        } else {
+                          setSelectedLocations(prev => prev.filter(l => l !== location));
+                        }
+                      }}
+                    />
+                    <label className="text-sm text-slate-700">{location}</label>
+                  </div>
+                  <span className="text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                    {[145, 230, 180, 95, 120, 85, 65][index]}
+                  </span>
                 </div>
               ))}
             </CardContent>
@@ -282,11 +363,13 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
         </Card>
 
         {/* Salary Range */}
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
-              Salary Range (LPA)
+        <Card className="border-slate-100">
+          <CardHeader className="pb-2 pt-3">
+            <CardTitle className="text-sm font-medium flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-slate-600" />
+                Salary Range
+              </div>
               <Button
                 variant="ghost"
                 size="sm"
@@ -301,13 +384,24 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
           </CardHeader>
           {expandedSections.salary && (
             <CardContent className="pt-0 space-y-2">
-              {["0-10", "10-20", "20-30", "30+"].map(range => (
-                <div key={range} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`salary-${range}`}
-                    onCheckedChange={() => handleSalaryRangeChange(range)}
-                  />
-                  <label htmlFor={`salary-${range}`} className="text-sm text-slate-700">{range}</label>
+              {salaryRanges.map(salary => (
+                <div key={salary.range} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      checked={selectedSalaryRanges.includes(salary.range)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSelectedSalaryRanges(prev => [...prev, salary.range]);
+                        } else {
+                          setSelectedSalaryRanges(prev => prev.filter(r => r !== salary.range));
+                        }
+                      }}
+                    />
+                    <label className="text-sm text-slate-700">{salary.range}</label>
+                  </div>
+                  <span className="text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                    {salary.count}
+                  </span>
                 </div>
               ))}
             </CardContent>

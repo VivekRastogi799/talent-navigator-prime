@@ -25,6 +25,8 @@ interface CandidateCardProps {
   onSave: (candidateId: string) => void;
   onShortlist: (candidateId: string) => void;
   unlocksLeft: number;
+  isBookmarked?: boolean;
+  compact?: boolean;
 }
 
 export const CandidateCard = ({ 
@@ -32,19 +34,15 @@ export const CandidateCard = ({
   onViewProfile, 
   onSave, 
   onShortlist, 
-  unlocksLeft 
+  unlocksLeft,
+  isBookmarked = false,
+  compact = false
 }: CandidateCardProps) => {
-  const [isSaved, setIsSaved] = useState(false);
-  const [isShortlisted, setIsShortlisted] = useState(false);
+  const [isSaved, setIsSaved] = useState(isBookmarked);
 
   const handleSave = () => {
     setIsSaved(!isSaved);
     onSave(candidate.id);
-  };
-
-  const handleShortlist = () => {
-    setIsShortlisted(!isShortlisted);
-    onShortlist(candidate.id);
   };
 
   return (
@@ -120,7 +118,7 @@ export const CandidateCard = ({
             ) : (
               <>
                 <Unlock className="h-3 w-3 mr-1" />
-                Unlock Profile
+                {compact ? 'Unlock' : 'Unlock Profile'}
               </>
             )}
           </Button>
@@ -128,17 +126,10 @@ export const CandidateCard = ({
             onClick={handleSave}
             variant="outline" 
             size="sm"
-            className={`${isSaved ? 'bg-blue-50 border-blue-200' : ''}`}
+            className={`${isSaved ? 'bg-blue-50 border-blue-200 text-blue-600' : ''}`}
+            title={isSaved ? 'Remove bookmark' : 'Bookmark candidate'}
           >
             <Bookmark className={`h-3 w-3 ${isSaved ? 'fill-current text-blue-600' : ''}`} />
-          </Button>
-          <Button 
-            onClick={handleShortlist}
-            variant="outline" 
-            size="sm"
-            className={`${isShortlisted ? 'bg-yellow-50 border-yellow-200' : ''}`}
-          >
-            <Star className={`h-3 w-3 ${isShortlisted ? 'fill-current text-yellow-600' : ''}`} />
           </Button>
         </div>
 
