@@ -1,12 +1,12 @@
 
 import { useState } from "react";
-import { X, Eye, Download, BookmarkPlus, Filter, SortAsc, User, Building, MapPin, Clock, DollarSign, BarChart3 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { X, Filter, SortAsc, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DrilldownModal } from "./DrilldownModal";
+import { CandidateCard } from "./candidate/CandidateCard";
+import { CandidateDeepDive } from "./candidate/CandidateDeepDive";
 
 interface DrilldownPanelProps {
   isOpen: boolean;
@@ -28,6 +28,23 @@ interface Candidate {
   skills: string[];
   lastUpdated: string;
   status: 'Active' | 'Passive';
+  isUnlocked: boolean;
+  whyRelevant: string;
+  detailedWhyRelevant: string;
+  insights: string[];
+  tier: string;
+  remoteOk: boolean;
+  lookingToSwitch: boolean;
+  email: string;
+  phone: string;
+  careerTimeline: Array<{
+    period: string;
+    role: string;
+    company: string;
+    type: 'education' | 'work';
+  }>;
+  lastActive: string;
+  profileUpdated: string;
 }
 
 const mockCandidates: Candidate[] = [
@@ -40,9 +57,25 @@ const mockCandidates: Candidate[] = [
     ctc: "₹28 LPA",
     location: "Bangalore",
     noticePeriod: "2 months",
-    skills: ["Product Strategy", "SQL", "A/B Testing"],
+    skills: ["Product Strategy", "SQL", "A/B Testing", "Market Research", "Leadership"],
     lastUpdated: "2 days ago",
-    status: "Active"
+    status: "Active",
+    isUnlocked: false,
+    whyRelevant: "Ex-Flipkart • ISB • 0-1 Scaling experience",
+    detailedWhyRelevant: "Strong product management background with proven 0-1 scaling experience at Flipkart. MBA from ISB with deep understanding of Indian market dynamics. Led 3 successful product launches with 10M+ users.",
+    insights: ["Leadership", "Tier 1", "High Salary", "Startup Friendly", "Product Innovation"],
+    tier: "FAANG",
+    remoteOk: true,
+    lookingToSwitch: true,
+    email: "rahul.sharma@email.com",
+    phone: "+91 98765 43210",
+    careerTimeline: [
+      { period: "2018-2020", role: "MBA", company: "ISB Hyderabad", type: 'education' },
+      { period: "2020-2022", role: "Product Manager", company: "Flipkart", type: 'work' },
+      { period: "2022-Present", role: "Senior Product Manager", company: "Google", type: 'work' }
+    ],
+    lastActive: "2 hours ago",
+    profileUpdated: "1 week ago"
   },
   {
     id: "2",
@@ -53,9 +86,25 @@ const mockCandidates: Candidate[] = [
     ctc: "₹22 LPA",
     location: "Hyderabad",
     noticePeriod: "1 month",
-    skills: ["Data Analytics", "User Research", "Agile"],
+    skills: ["Data Analytics", "User Research", "Agile", "Product Design", "Growth"],
     lastUpdated: "1 week ago",
-    status: "Passive"
+    status: "Passive",
+    isUnlocked: true,
+    whyRelevant: "Data-driven PM • Growth specialist • Remote work advocate",
+    detailedWhyRelevant: "Exceptional data analytics skills with proven growth hacking experience. Led user acquisition initiatives that resulted in 200% user growth. Strong advocate for remote work culture.",
+    insights: ["Data Expert", "Growth Hacker", "Remote First", "Analytics Pro"],
+    tier: "FAANG",
+    remoteOk: true,
+    lookingToSwitch: false,
+    email: "priya.patel@email.com",
+    phone: "+91 87654 32109",
+    careerTimeline: [
+      { period: "2017-2021", role: "B.Tech", company: "IIT Delhi", type: 'education' },
+      { period: "2021-2023", role: "Associate Product Manager", company: "Zomato", type: 'work' },
+      { period: "2023-Present", role: "Product Manager", company: "Microsoft", type: 'work' }
+    ],
+    lastActive: "5 hours ago",
+    profileUpdated: "3 days ago"
   },
   {
     id: "3",
@@ -66,9 +115,25 @@ const mockCandidates: Candidate[] = [
     ctc: "₹18 LPA",
     location: "Mumbai",
     noticePeriod: "Immediate",
-    skills: ["Python", "Product Analytics", "Figma"],
+    skills: ["Python", "Product Analytics", "Figma", "User Testing", "Agile"],
     lastUpdated: "3 days ago",
-    status: "Active"
+    status: "Active",
+    isUnlocked: false,
+    whyRelevant: "Technical PM • Immediate joiner • Mumbai based",
+    detailedWhyRelevant: "Unique combination of technical and product skills. Strong in Python and analytics, making him ideal for technical product roles. Available for immediate joining.",
+    insights: ["Technical Expert", "Immediate Joiner", "Cost Effective", "High Potential"],
+    tier: "FAANG",
+    remoteOk: false,
+    lookingToSwitch: true,
+    email: "amit.kumar@email.com",
+    phone: "+91 76543 21098",
+    careerTimeline: [
+      { period: "2018-2022", role: "B.Tech", company: "NIT Trichy", type: 'education' },
+      { period: "2022-2023", role: "Product Analyst", company: "Paytm", type: 'work' },
+      { period: "2023-Present", role: "Associate Product Manager", company: "Amazon", type: 'work' }
+    ],
+    lastActive: "1 day ago",
+    profileUpdated: "2 days ago"
   }
 ];
 
@@ -76,7 +141,10 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
   const [sortBy, setSortBy] = useState("relevance");
   const [searchTerm, setSearchTerm] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [showCandidates, setShowCandidates] = useState(true); // Changed to true by default
+  const [showCandidates, setShowCandidates] = useState(true);
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [deepDiveOpen, setDeepDiveOpen] = useState(false);
+  const [unlocksLeft, setUnlocksLeft] = useState(5);
 
   const handleDrilldownClick = () => {
     setModalOpen(true);
@@ -85,6 +153,29 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
   const handleViewCandidates = () => {
     setShowCandidates(true);
     setModalOpen(false);
+  };
+
+  const handleViewProfile = (candidateId: string) => {
+    const candidate = mockCandidates.find(c => c.id === candidateId);
+    if (candidate) {
+      if (!candidate.isUnlocked && unlocksLeft > 0) {
+        // Unlock the candidate
+        candidate.isUnlocked = true;
+        setUnlocksLeft(prev => prev - 1);
+      }
+      if (candidate.isUnlocked) {
+        setSelectedCandidate(candidate);
+        setDeepDiveOpen(true);
+      }
+    }
+  };
+
+  const handleSave = (candidateId: string) => {
+    console.log('Saving candidate:', candidateId);
+  };
+
+  const handleShortlist = (candidateId: string) => {
+    console.log('Shortlisting candidate:', candidateId);
   };
 
   if (!isOpen) return null;
@@ -101,15 +192,14 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
             </Button>
           </div>
           
-          {/* Primary Action Buttons - View Candidates first */}
+          {/* Primary Action Buttons */}
           <div className="flex gap-2 mb-3">
             <Button 
               onClick={() => setShowCandidates(true)}
               size="sm" 
               className="flex-1 bg-blue-600 hover:bg-blue-700"
             >
-              <User className="h-4 w-4 mr-1" />
-              View Candidates
+              View Candidates ({mockCandidates.length})
             </Button>
             <Button 
               onClick={handleDrilldownClick}
@@ -137,8 +227,8 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="relevance">Relevance</SelectItem>
-                    <SelectItem value="recent">Most Recent</SelectItem>
+                    <SelectItem value="relevance">Match %</SelectItem>
+                    <SelectItem value="recent">Newest</SelectItem>
                     <SelectItem value="ctc">Highest CTC</SelectItem>
                     <SelectItem value="experience">Experience</SelectItem>
                   </SelectContent>
@@ -148,6 +238,11 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
                   Filter
                 </Button>
               </div>
+              
+              {/* Unlock Status */}
+              <div className="text-xs text-slate-600 bg-blue-50 p-2 rounded">
+                💳 {unlocksLeft} profile unlocks remaining
+              </div>
             </div>
           )}
         </div>
@@ -155,68 +250,16 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {showCandidates ? (
-            // Show candidate list by default
+            // Enhanced candidate cards
             mockCandidates.map((candidate) => (
-              <Card key={candidate.id} className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="font-medium text-slate-800">{candidate.name}</h3>
-                      <p className="text-sm text-slate-600">{candidate.designation}</p>
-                    </div>
-                    <Badge 
-                      variant={candidate.status === 'Active' ? 'default' : 'secondary'}
-                      className="text-xs"
-                    >
-                      {candidate.status}
-                    </Badge>
-                  </div>
-
-                  <div className="space-y-2 text-sm text-slate-600">
-                    <div className="flex items-center gap-1">
-                      <Building className="h-3 w-3" />
-                      <span>{candidate.company}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
-                      <span>{candidate.location}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <DollarSign className="h-3 w-3" />
-                      <span>{candidate.ctc} • {candidate.experience}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      <span>{candidate.noticePeriod}</span>
-                    </div>
-                  </div>
-
-                  <div className="mt-3">
-                    <div className="flex flex-wrap gap-1 mb-3">
-                      {candidate.skills.slice(0, 3).map((skill) => (
-                        <Badge key={skill} variant="outline" className="text-xs">
-                          {skill}
-                        </Badge>
-                      ))}
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-slate-500">Updated {candidate.lastUpdated}</span>
-                      <div className="flex gap-1">
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-3 w-3" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <BookmarkPlus className="h-3 w-3" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <Download className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <CandidateCard
+                key={candidate.id}
+                candidate={candidate}
+                onViewProfile={handleViewProfile}
+                onSave={handleSave}
+                onShortlist={handleShortlist}
+                unlocksLeft={unlocksLeft}
+              />
             ))
           ) : (
             // Show drilldown options if explicitly requested
@@ -238,29 +281,12 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
                   variant="outline" 
                   className="w-full border-green-500 text-green-600 hover:bg-green-50"
                 >
-                  <User className="h-4 w-4 mr-2" />
                   Back to Candidate List
                 </Button>
               </div>
             </div>
           )}
         </div>
-
-        {/* Footer - only show when viewing candidates */}
-        {showCandidates && (
-          <div className="p-4 border-t border-slate-200 bg-slate-50">
-            <div className="flex gap-2">
-              <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700">
-                <Download className="h-4 w-4 mr-2" />
-                Export List
-              </Button>
-              <Button variant="outline" size="sm" className="flex-1">
-                <BookmarkPlus className="h-4 w-4 mr-2" />
-                Save Report
-              </Button>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Drilldown Modal */}
@@ -272,6 +298,19 @@ export const DrilldownPanel = ({ isOpen, onClose, title, data, type }: Drilldown
         type={type === 'locations' ? 'location' : type === 'companies' ? 'company' : 'skill'}
         onViewCandidates={handleViewCandidates}
       />
+
+      {/* Deep Dive Modal */}
+      {selectedCandidate && (
+        <CandidateDeepDive
+          isOpen={deepDiveOpen}
+          onClose={() => setDeepDiveOpen(false)}
+          candidate={selectedCandidate}
+          onSave={() => console.log('Save candidate')}
+          onShare={() => console.log('Share candidate')}
+          onTag={() => console.log('Tag candidate')}
+          onExportResume={() => console.log('Export resume')}
+        />
+      )}
     </>
   );
 };
