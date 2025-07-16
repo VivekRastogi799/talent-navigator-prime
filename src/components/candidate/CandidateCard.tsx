@@ -1,56 +1,72 @@
 import { useState } from "react";
 import { Eye, Bookmark, Star, MapPin, Building, Clock, DollarSign, Unlock, GraduationCap, Calendar, Users, Briefcase, Award } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-interface CandidateCardProps {
-  candidate: {
-    id: string;
-    designation: string;
-    company: string;
-    experience: string;
-    ctc: string;
-    location: string;
-    isUnlocked: boolean;
-    whyRelevant: string;
-    insights: string[];
-    tier: string;
-    status: 'Active' | 'Passive';
-    remoteOk: boolean;
-    lookingToSwitch: boolean;
-    
-    // New optional fields based on reference (backwards compatible)
-    name?: string; // Available when unlocked
-    lastSeen?: string;
-    fullTimeYears?: string;
-    availabilityStatus?: string; // "Can join in 30 days", "Can join immediately", etc.
-    currentSalary?: string;
-    expectedSalary?: string;
-    currentCompanies?: string[];
-    education?: {
-      institute: string;
-      degree?: string;
-    };
-    skills?: string[];
-    additionalSkillsCount?: number;
-    previousCompanies?: string[];
-    canRelocate?: boolean;
-    preferredLocations?: string[];
-    profileStrength?: 'Strong' | 'Good' | 'Average';
-    isVerified?: boolean;
+// Mock UI components to simulate the shadcn/ui components
+const Card = ({ children, className = "" }) => (
+  <div className={`rounded-lg border bg-white shadow-sm ${className}`}>
+    {children}
+  </div>
+);
+
+const CardContent = ({ children, className = "" }) => (
+  <div className={className}>{children}</div>
+);
+
+const Button = ({ children, className = "", variant = "default", size = "default", disabled = false, onClick, title }) => {
+  const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  
+  const variants = {
+    default: "bg-blue-600 text-white hover:bg-blue-700",
+    outline: "border border-gray-300 bg-white hover:bg-gray-50",
+    ghost: "hover:bg-gray-100",
+    secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200"
   };
-  onViewProfile: (candidateId: string) => void;
-  onSave: (candidateId: string) => void;
-  onShortlist: (candidateId: string) => void;
-  unlocksLeft: number;
-  isBookmarked?: boolean;
-  compact?: boolean;
-  isExpanded?: boolean; // New prop to indicate if this is in expanded view
-}
+  
+  const sizes = {
+    default: "h-10 py-2 px-4",
+    sm: "h-9 px-3 text-sm"
+  };
+  
+  return (
+    <button
+      className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`}
+      disabled={disabled}
+      onClick={onClick}
+      title={title}
+    >
+      {children}
+    </button>
+  );
+};
 
-export const CandidateCard = ({ 
+const Badge = ({ children, variant = "default", className = "" }) => {
+  const variants = {
+    default: "bg-blue-600 text-white",
+    outline: "border border-gray-300 bg-white text-gray-700",
+    secondary: "bg-gray-100 text-gray-900"
+  };
+  
+  return (
+    <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${variants[variant]} ${className}`}>
+      {children}
+    </span>
+  );
+};
+
+const Avatar = ({ children, className = "" }) => (
+  <div className={`relative flex shrink-0 overflow-hidden rounded-full ${className}`}>
+    {children}
+  </div>
+);
+
+const AvatarFallback = ({ children, className = "" }) => (
+  <div className={`flex h-full w-full items-center justify-center rounded-full ${className}`}>
+    {children}
+  </div>
+);
+
+// The actual CandidateCard component
+const CandidateCard = ({ 
   candidate, 
   onViewProfile, 
   onSave, 
@@ -59,7 +75,7 @@ export const CandidateCard = ({
   isBookmarked = false,
   compact = false,
   isExpanded = false
-}: CandidateCardProps) => {
+}) => {
   const [isSaved, setIsSaved] = useState(isBookmarked);
 
   const handleSave = () => {
@@ -67,7 +83,7 @@ export const CandidateCard = ({
     onSave(candidate.id);
   };
 
-  const getInitials = (name?: string) => {
+  const getInitials = (name) => {
     if (!name) return candidate.designation.charAt(0).toUpperCase();
     return name.split(' ').map(n => n.charAt(0)).join('').toUpperCase();
   };
@@ -370,3 +386,182 @@ export const CandidateCard = ({
     </Card>
   );
 };
+
+// Demo component to show both views
+const App = () => {
+  const [viewType, setViewType] = useState('compact');
+
+  const dummyCandidates = [
+    {
+      id: '1',
+      name: 'Aarav Mehta',
+      designation: 'Senior Product Manager',
+      company: 'Razorpay',
+      experience: '7.5 years',
+      fullTimeYears: '7+ years',
+      ctc: '₹48 LPA',
+      currentSalary: '₹48 LPA',
+      expectedSalary: '₹60 LPA',
+      location: 'Bangalore',
+      isUnlocked: true,
+      whyRelevant: 'Led major product revamps in fintech, built RazorpayX dashboard from scratch, and drove 25% improvement in merchant onboarding.',
+      insights: ['Fintech PM', 'Scalable Platforms', 'Team Leadership'],
+      tier: 'Funded Startup',
+      status: 'Active',
+      remoteOk: true,
+      lookingToSwitch: true,
+      lastSeen: 'Today',
+      availabilityStatus: 'Can join in 30 days',
+      currentCompanies: ['Razorpay', 'Instamojo'],
+      education: {
+        institute: 'IIT Bombay',
+        degree: 'B.Tech - Mechanical'
+      },
+      skills: ['Product Strategy', 'APIs', 'JIRA', 'Agile', 'SQL', 'Amplitude'],
+      additionalSkillsCount: 3,
+      canRelocate: true,
+      preferredLocations: ['Hyderabad', 'Pune', 'Delhi'],
+      isVerified: true
+    },
+    {
+      id: '2',
+      name: 'Riya Sharma',
+      designation: 'Backend Engineer',
+      company: 'Swiggy',
+      experience: '5 years',
+      fullTimeYears: '5 years',
+      ctc: '₹34 LPA',
+      currentSalary: '₹34 LPA',
+      expectedSalary: '₹42 LPA',
+      location: 'Bangalore',
+      isUnlocked: true,
+      whyRelevant: 'Built real-time delivery allocation microservices, reduced latency by 30%, and managed backend for 3 city launches.',
+      insights: ['High Availability Systems', 'GoLang', 'Scalability'],
+      tier: 'Tier 1+ college',
+      status: 'Active',
+      remoteOk: false,
+      lookingToSwitch: false,
+      lastSeen: '2 days ago',
+      availabilityStatus: '60 days notice',
+      currentCompanies: ['Swiggy'],
+      education: {
+        institute: 'NIT Trichy',
+        degree: 'B.Tech Computer Science'
+      },
+      skills: ['GoLang', 'Redis', 'Kafka', 'Kubernetes', 'MongoDB'],
+      additionalSkillsCount: 4,
+      canRelocate: false,
+      isVerified: false
+    },
+    {
+      id: '3',
+      name: 'Yashdeep Singh',
+      designation: 'Growth Marketing Lead',
+      company: 'CRED',
+      experience: '6 years',
+      fullTimeYears: '6+ years',
+      ctc: '₹52 LPA',
+      currentSalary: '₹52 LPA',
+      expectedSalary: '₹65 LPA',
+      location: 'Remote',
+      isUnlocked: true,
+      whyRelevant: 'Scaled CRED’s referral engine to 10M+ users, and led GTM for CRED Travel. Ex-Media.net.',
+      insights: ['Performance Marketing', 'GTM Expert', 'Referral Growth'],
+      tier: 'Funded Startup',
+      status: 'Passive',
+      remoteOk: true,
+      lookingToSwitch: true,
+      lastSeen: '4 days ago',
+      availabilityStatus: 'Can join immediately',
+      currentCompanies: ['CRED', 'Media.net'],
+      education: {
+        institute: 'BITS Pilani',
+        degree: 'M.Sc Economics + B.E. CS'
+      },
+      skills: ['Google Ads', 'Mixpanel', 'MoEngage', 'CRM', 'SQL', 'Budgeting'],
+      additionalSkillsCount: 6,
+      canRelocate: true,
+      preferredLocations: ['Remote only'],
+      isVerified: true
+    },
+    {
+      id: '4',
+      name: 'Sneha Kulkarni',
+      designation: 'Data Scientist',
+      company: 'Rivigo',
+      experience: '4.2 years',
+      fullTimeYears: '4+ years',
+      ctc: '₹28 LPA',
+      currentSalary: '₹28 LPA',
+      expectedSalary: '₹35 LPA',
+      location: 'Noida',
+      isUnlocked: false,
+      whyRelevant: 'Worked on optimization models to reduce logistics cost by 18%. Solid experience in ML, XGBoost, and demand forecasting.',
+      insights: ['ML Ops', 'XGBoost Expert', 'Logistics Forecasting'],
+      tier: 'Tier 1+ college',
+      status: 'Active',
+      remoteOk: false,
+      lookingToSwitch: true,
+      lastSeen: 'Jul 11, 2025',
+      availabilityStatus: 'Can join in 15 days',
+      currentCompanies: ['Rivigo'],
+      education: {
+        institute: 'IIT Dhanbad',
+        degree: 'B.Tech - Mining Engineering'
+      },
+      skills: ['Python', 'XGBoost', 'NumPy', 'Scikit-learn', 'Pandas'],
+      additionalSkillsCount: 2,
+      canRelocate: true,
+      preferredLocations: ['Gurgaon', 'Bangalore', 'Hyderabad'],
+      isVerified: false
+    }
+  ];
+
+  const handleViewProfile = (id) => alert(`View profile clicked for candidate ${id}`);
+  const handleSave = (id) => alert(`Save clicked for candidate ${id}`);
+  const handleShortlist = (id) => alert(`Shortlist clicked for candidate ${id}`);
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">CandidateCard Component</h1>
+        <p className="text-gray-600 mb-6">Recruitment UI — Enhanced with enriched dummy data & insights</p>
+
+        {/* View Toggle */}
+        <div className="mb-6 flex gap-3">
+          <Button 
+            onClick={() => setViewType('compact')}
+            variant={viewType === 'compact' ? 'default' : 'outline'}
+            size="sm"
+          >
+            Compact View
+          </Button>
+          <Button 
+            onClick={() => setViewType('expanded')}
+            variant={viewType === 'expanded' ? 'default' : 'outline'}
+            size="sm"
+          >
+            Expanded View
+          </Button>
+        </div>
+
+        {/* Render Candidate Cards */}
+        <div className="space-y-6">
+          {dummyCandidates.map(candidate => (
+            <CandidateCard
+              key={candidate.id}
+              candidate={candidate}
+              onViewProfile={handleViewProfile}
+              onSave={handleSave}
+              onShortlist={handleShortlist}
+              unlocksLeft={3}
+              isExpanded={viewType === 'expanded'}
+              compact={viewType === 'compact'}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+export default App;
