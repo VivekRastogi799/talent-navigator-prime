@@ -1,262 +1,224 @@
 
-import { useState, useEffect } from "react";
-import { Clock, Search, Bookmark, Users, X, ChevronRight, Calendar, Star } from "lucide-react";
+import { useState } from "react";
+import { Search, Calendar, Users, BarChart3, Star, Filter, ChevronRight } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-
-interface SearchItem {
-  id: string;
-  query: string;
-  filters: {
-    location?: string[];
-    experience?: string;
-    skills?: string[];
-    company?: string[];
-  };
-  resultCount: number;
-  timestamp: Date;
-  bookmarked: boolean;
-  status: 'completed' | 'in-progress' | 'failed';
-  shortlistedCount: number;
-}
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface RecentSearchesProps {
-  onSearchSelect: (search: SearchItem) => void;
-  onViewBookmarks: () => void;
-  searchTerm?: string;
-  showBookmarkedOnly?: boolean;
+  onSelectSearch: (searchId: string) => void;
+  onViewCandidates: (searchId: string) => void;
 }
 
-const mockRecentSearches: SearchItem[] = [
-  {
-    id: "1",
-    query: "Senior Product Manager",
-    filters: {
-      location: ["Bangalore", "Mumbai"],
-      experience: "5-8 years",
-      skills: ["Product Strategy", "Analytics"],
-      company: ["FAANG", "Unicorn"]
+export const RecentSearches = ({ onSelectSearch, onViewCandidates }: RecentSearchesProps) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("recent");
+
+  const recentSearches = [
+    {
+      id: "1",
+      title: "Senior Product Manager - B2C",
+      date: "2024-01-15",
+      candidatesFound: 142,
+      shortlisted: 8,
+      type: "jd-search",
+      status: "active"
     },
-    resultCount: 156,
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    bookmarked: true,
-    status: 'completed',
-    shortlistedCount: 8
-  },
-  {
-    id: "2", 
-    query: "Frontend Developer React",
-    filters: {
-      location: ["Hyderabad", "Pune"],
-      experience: "3-6 years",
-      skills: ["React", "TypeScript", "Next.js"]
+    {
+      id: "2", 
+      title: "Data Scientist • ML Engineer",
+      date: "2024-01-14",
+      candidatesFound: 89,
+      shortlisted: 12,
+      type: "skill-search",
+      status: "completed"
     },
-    resultCount: 243,
-    timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000),
-    bookmarked: false,
-    status: 'completed',
-    shortlistedCount: 12
-  },
-  {
-    id: "3",
-    query: "Data Scientist ML",
-    filters: {
-      location: ["Bangalore"],
-      experience: "4-7 years", 
-      skills: ["Python", "Machine Learning", "Deep Learning"],
-      company: ["Startup", "Unicorn"]
-    },
-    resultCount: 89,
-    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    bookmarked: true,
-    status: 'completed',
-    shortlistedCount: 5
-  },
-  {
-    id: "4",
-    query: "DevOps Engineer",
-    filters: {
-      location: ["Remote", "Bangalore"],
-      experience: "4-8 years",
-      skills: ["AWS", "Kubernetes", "Docker"]
-    },
-    resultCount: 67,
-    timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000),
-    bookmarked: false,
-    status: 'in-progress',
-    shortlistedCount: 0
-  }
-];
-
-export const RecentSearches = ({ onSearchSelect, onViewBookmarks, searchTerm = "", showBookmarkedOnly = false }: RecentSearchesProps) => {
-  const [searches, setSearches] = useState<SearchItem[]>(mockRecentSearches);
-
-  const toggleBookmark = (searchId: string) => {
-    setSearches(prev => prev.map(search => 
-      search.id === searchId 
-        ? { ...search, bookmarked: !search.bookmarked }
-        : search
-    ));
-  };
-
-  const removeSearch = (searchId: string) => {
-    setSearches(prev => prev.filter(search => search.id !== searchId));
-  };
-
-  const formatTimeAgo = (timestamp: Date) => {
-    const now = new Date();
-    const diff = now.getTime() - timestamp.getTime();
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const days = Math.floor(hours / 24);
-    
-    if (days > 0) return `${days}d ago`;
-    if (hours > 0) return `${hours}h ago`;
-    return "Just now";
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'in-progress': return 'bg-yellow-100 text-yellow-800';
-      case 'failed': return 'bg-red-100 text-red-800';
-      default: return 'bg-slate-100 text-slate-800';
+    {
+      id: "3",
+      title: "Frontend Developer • React • 3-5 years",
+      date: "2024-01-12",
+      candidatesFound: 234,
+      shortlisted: 15,
+      type: "skill-search", 
+      status: "active"
     }
+  ];
+
+  const bookmarkedSearches = [
+    {
+      id: "4",
+      title: "VP Engineering - SaaS Startup",
+      date: "2024-01-10",
+      candidatesFound: 67,
+      shortlisted: 5,
+      type: "jd-search",
+      status: "bookmarked"
+    }
+  ];
+
+  const shortlists = [
+    {
+      id: "5",
+      title: "Product Manager Shortlist",
+      date: "2024-01-15",
+      candidatesFound: 0,
+      shortlisted: 8,
+      type: "shortlist",
+      status: "active"
+    }
+  ];
+
+  const sortOptions = [
+    { value: "recent", label: "Most Recent" },
+    { value: "candidates", label: "Most Candidates" },
+    { value: "shortlisted", label: "Most Shortlisted" },
+    { value: "alphabetical", label: "Alphabetical" }
+  ];
+
+  const filterSearches = (searches: any[]) => {
+    return searches.filter(search => 
+      search.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   };
 
-  // Filter searches based on search term and bookmark status
-  const filteredSearches = searches
-    .filter(search => {
-      if (showBookmarkedOnly && !search.bookmarked) return false;
-      if (searchTerm) {
-        return search.query.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               search.filters.skills?.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase())) ||
-               search.filters.location?.some(loc => loc.toLowerCase().includes(searchTerm.toLowerCase()));
-      }
-      return true;
-    });
-
-  const bookmarkedCount = searches.filter(s => s.bookmarked).length;
-
-  return (
-    <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Clock className="h-5 w-5 text-slate-600" />
-          <h3 className="font-semibold text-slate-800">
-            {showBookmarkedOnly ? 'Bookmarked Searches' : 'Recent Searches'}
-          </h3>
-          <Badge variant="outline">{filteredSearches.length}</Badge>
-        </div>
-        {!showBookmarkedOnly && (
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={onViewBookmarks}
-            className="text-primary border-primary/20 hover:bg-primary/10"
-          >
-            <Bookmark className="h-4 w-4 mr-1" />
-            Bookmarked ({bookmarkedCount})
-          </Button>
-        )}
-      </div>
-
-      {/* Search List */}
-      <div className="space-y-3">
-        {filteredSearches.map((search) => (
-          <Card key={search.id} className="p-4 hover:shadow-md transition-shadow cursor-pointer border-slate-200 hover:border-primary/30">
-            <div className="flex items-start justify-between">
-              <div className="flex-1 min-w-0" onClick={() => onSearchSelect(search)}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Search className="h-4 w-4 text-slate-500" />
-                  <span className="font-medium text-slate-800 truncate">{search.query}</span>
-                  <Badge variant="outline" className="text-green-600 border-green-200">
-                    <Users className="h-3 w-3 mr-1" />
-                    {search.resultCount}
-                  </Badge>
-                  <Badge className={getStatusColor(search.status)}>
-                    {search.status}
-                  </Badge>
-                </div>
-                
-                {/* Filters */}
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {search.filters.location && (
-                    <Badge variant="secondary" className="text-xs">
-                      📍 {search.filters.location.join(", ")}
-                    </Badge>
-                  )}
-                  {search.filters.experience && (
-                    <Badge variant="secondary" className="text-xs">
-                      ⏱️ {search.filters.experience}
-                    </Badge>
-                  )}
-                  {search.filters.skills && search.filters.skills.length > 0 && (
-                    <Badge variant="secondary" className="text-xs">
-                      🔧 {search.filters.skills.slice(0, 2).join(", ")}
-                      {search.filters.skills.length > 2 && ` +${search.filters.skills.length - 2}`}
-                    </Badge>
-                  )}
-                  {search.filters.company && (
-                    <Badge variant="secondary" className="text-xs">
-                      🏢 {search.filters.company.join(", ")}
-                    </Badge>
-                  )}
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <span className="text-xs text-slate-500 flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {formatTimeAgo(search.timestamp)}
-                    </span>
-                    <span className="text-xs text-slate-500 flex items-center gap-1">
-                      <Star className="h-3 w-3" />
-                      {search.shortlistedCount} shortlisted
-                    </span>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-slate-400" />
-                </div>
+  const renderSearchCard = (search: any) => (
+    <Card key={search.id} className="border-slate-200 hover:border-primary/50 transition-colors cursor-pointer group">
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <h3 className="font-semibold text-slate-900 group-hover:text-primary transition-colors">
+                {search.title}
+              </h3>
+              {search.status === 'bookmarked' && (
+                <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+              )}
+            </div>
+            
+            <div className="flex items-center gap-4 text-sm text-slate-600 mb-3">
+              <div className="flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                {new Date(search.date).toLocaleDateString()}
               </div>
-              
-              {/* Actions */}
-              <div className="flex items-center gap-1 ml-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleBookmark(search.id);
-                  }}
-                  className="h-8 w-8 p-0"
-                >
-                  <Bookmark className={`h-4 w-4 ${search.bookmarked ? 'fill-primary text-primary' : 'text-slate-400'}`} />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeSearch(search.id);
-                  }}
-                  className="h-8 w-8 p-0 text-slate-400 hover:text-red-500"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+              {search.candidatesFound > 0 && (
+                <div className="flex items-center gap-1">
+                  <Users className="h-4 w-4" />
+                  {search.candidatesFound} candidates
+                </div>
+              )}
+              <div className="flex items-center gap-1">
+                <Star className="h-4 w-4" />
+                {search.shortlisted} shortlisted
               </div>
             </div>
-          </Card>
-        ))}
+
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => onSelectSearch(search.id)}
+                className="text-primary border-primary hover:bg-primary hover:text-white"
+              >
+                <BarChart3 className="h-4 w-4 mr-1" />
+                View Insights
+              </Button>
+              {search.shortlisted > 0 && (
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => onViewCandidates(search.id)}
+                  className="text-slate-600 hover:text-primary"
+                >
+                  <Users className="h-4 w-4 mr-1" />
+                  View Candidates
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <div className="space-y-6">
+      {/* Search and Filter Bar */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input
+              placeholder="Search your saved searches..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
+        <Select value={sortBy} onValueChange={setSortBy}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            {sortOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      {filteredSearches.length === 0 && (
-        <div className="text-center py-8 text-slate-500">
-          <Search className="h-12 w-12 text-slate-300 mx-auto mb-2" />
-          <p>No searches found</p>
-          {searchTerm && <p className="text-sm">Try adjusting your search terms</p>}
-        </div>
-      )}
+      {/* Tabbed Content */}
+      <Tabs defaultValue="recent" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="recent">Recent Searches</TabsTrigger>
+          <TabsTrigger value="shortlists">Shortlists</TabsTrigger>
+          <TabsTrigger value="bookmarked">Bookmarked</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="recent" className="space-y-4 mt-6">
+          <div className="grid gap-4">
+            {filterSearches(recentSearches).map(renderSearchCard)}
+            {filterSearches(recentSearches).length === 0 && (
+              <Card className="border-slate-200">
+                <CardContent className="text-center py-8">
+                  <p className="text-slate-500">No recent searches found.</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="shortlists" className="space-y-4 mt-6">
+          <div className="grid gap-4">
+            {filterSearches(shortlists).map(renderSearchCard)}
+            {filterSearches(shortlists).length === 0 && (
+              <Card className="border-slate-200">
+                <CardContent className="text-center py-8">
+                  <p className="text-slate-500">No shortlists created yet.</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="bookmarked" className="space-y-4 mt-6">
+          <div className="grid gap-4">
+            {filterSearches(bookmarkedSearches).map(renderSearchCard)}
+            {filterSearches(bookmarkedSearches).length === 0 && (
+              <Card className="border-slate-200">
+                <CardContent className="text-center py-8">
+                  <p className="text-slate-500">No bookmarked searches yet.</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
