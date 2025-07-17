@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Search, Star, Clock, Users, TrendingUp, ArrowLeft, Eye, BarChart3 } from "lucide-react";
+import { Search, Star, Clock, Users, TrendingUp, ArrowLeft, Eye, BarChart3, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,7 +18,7 @@ interface SavedSearchSummary {
   totalSearches: number;
   profilesUnlocked: number;
   shortlists: number;
-  successRate: number;
+  avgMatchScore: number;
 }
 
 export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubProps) => {
@@ -34,7 +34,7 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
     totalSearches: 24,
     profilesUnlocked: 156,
     shortlists: 8,
-    successRate: 68
+    avgMatchScore: 86
   };
 
   const handleSearchSelect = (search: any) => {
@@ -187,11 +187,11 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
             <Card className="glass-card premium-shadow border-slate-200">
               <div className="flex items-center gap-3 p-4">
                 <div className="p-2 rounded-lg bg-purple-100">
-                  <TrendingUp className="h-5 w-5 text-purple-600" />
+                  <Target className="h-5 w-5 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-slate-800">{searchSummary.successRate}%</p>
-                  <p className="text-sm text-slate-600">Success Rate</p>
+                  <p className="text-2xl font-bold text-slate-800">{searchSummary.avgMatchScore}%</p>
+                  <p className="text-sm text-slate-600">Avg Match Score</p>
                 </div>
               </div>
             </Card>
@@ -202,7 +202,6 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
             <ShortlistManager 
               onViewProfile={onViewProfile}
               onCompareSelected={handleCompareSelected}
-              onViewInsights={handleViewInsights}
             />
           ) : (
             <div className="text-center py-12 text-slate-500">
@@ -228,12 +227,12 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-slate-100">
       {/* Header Navigation */}
-      <header className="bg-white border-b border-slate-200 shadow-sm">
+      <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-10">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-4">
             <div className="text-2xl font-bold gradient-text">TopTier</div>
             <span className="text-slate-400">•</span>
-            <h1 className="text-xl font-bold text-slate-800">Saved Candidates & Past Searches</h1>
+            <h1 className="text-xl font-bold text-slate-800">Candidate Discovery Hub</h1>
           </div>
           <Button 
             onClick={onStartNewSearch} 
@@ -245,77 +244,85 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
-        {/* Welcome Section */}
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-slate-800 mb-2">Your Candidate Discovery Hub</h2>
-          <p className="text-slate-600">Manage searches, build shortlists, and evaluate premium talent</p>
-        </div>
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Content Container with better spacing */}
+        <div className="space-y-8">
+          {/* Welcome Section with better positioning */}
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl font-bold text-slate-800">Manage Your Talent Pipeline</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Access your saved searches, build shortlists, and track premium candidates all in one place
+            </p>
+          </div>
 
-        {/* Search Bar */}
-        <div className="max-w-md mx-auto mb-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-            <Input
-              placeholder="Search by keyword or role..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border-slate-200 focus:border-primary"
-            />
+          {/* Search Bar - Centered and prominent */}
+          <div className="max-w-lg mx-auto">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
+              <Input
+                placeholder="Search by keyword, role, or company..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 py-3 text-base border-slate-200 focus:border-primary rounded-xl shadow-sm"
+              />
+            </div>
+          </div>
+
+          {/* Main Content with improved layout */}
+          <div className="bg-white rounded-2xl shadow-lg border border-slate-200">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <div className="border-b border-slate-200">
+                <TabsList className="grid w-full grid-cols-3 bg-transparent p-1 h-auto">
+                  <TabsTrigger 
+                    value="recent" 
+                    className="flex items-center gap-2 py-4 px-6 text-base data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg"
+                  >
+                    <Clock className="h-5 w-5" />
+                    Recent Searches
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="shortlist" 
+                    className="flex items-center gap-2 py-4 px-6 text-base data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg"
+                  >
+                    <Star className="h-5 w-5" />
+                    Shortlisted Candidates
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="bookmarks" 
+                    className="flex items-center gap-2 py-4 px-6 text-base data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg"
+                  >
+                    <Search className="h-5 w-5" />
+                    Bookmarked Searches
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+
+              <div className="p-6">
+                <TabsContent value="recent" className="mt-0">
+                  <RecentSearches 
+                    onViewInsights={handleViewInsights}
+                    searchTerm={searchTerm}
+                  />
+                </TabsContent>
+
+                <TabsContent value="shortlist" className="mt-0">
+                  <ShortlistManager 
+                    onViewProfile={onViewProfile}
+                    onCompareSelected={handleCompareSelected}
+                  />
+                </TabsContent>
+
+                <TabsContent value="bookmarks" className="mt-0">
+                  <RecentSearches 
+                    onViewInsights={handleViewInsights}
+                    searchTerm={searchTerm}
+                    showBookmarkedOnly={true}
+                  />
+                </TabsContent>
+              </div>
+            </Tabs>
           </div>
         </div>
-
-        {/* Main Content */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 bg-white/80 backdrop-blur-sm border border-slate-200">
-            <TabsTrigger 
-              value="recent" 
-              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white"
-            >
-              <Clock className="h-4 w-4" />
-              Recent Searches
-            </TabsTrigger>
-            <TabsTrigger 
-              value="shortlist" 
-              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white"
-            >
-              <Star className="h-4 w-4" />
-              Shortlists
-            </TabsTrigger>
-            <TabsTrigger 
-              value="bookmarks" 
-              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white"
-            >
-              <Search className="h-4 w-4" />
-              Bookmarked Searches
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="recent" className="mt-6">
-            <RecentSearches 
-              onSearchSelect={handleSearchSelect}
-              onViewBookmarks={() => setActiveTab("bookmarks")}
-              searchTerm={searchTerm}
-            />
-          </TabsContent>
-
-          <TabsContent value="shortlist" className="mt-6">
-            <ShortlistManager 
-              onViewProfile={onViewProfile}
-              onCompareSelected={handleCompareSelected}
-              onViewInsights={handleViewInsights}
-            />
-          </TabsContent>
-
-          <TabsContent value="bookmarks" className="mt-6">
-            <RecentSearches 
-              onSearchSelect={handleSearchSelect}
-              onViewBookmarks={() => {}}
-              searchTerm={searchTerm}
-              showBookmarkedOnly={true}
-            />
-          </TabsContent>
-        </Tabs>
       </div>
     </div>
   );

@@ -1,26 +1,19 @@
 
 import { useState } from "react";
-import { Search, Calendar, BarChart3, Filter, ChevronRight } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search, Calendar, BarChart3, ChevronRight } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface RecentSearchesProps {
-  onSelectSearch?: (searchId: string) => void;
-  onViewCandidates?: (searchId: string) => void;
-  onSearchSelect?: (search: any) => void;
-  onViewBookmarks?: () => void;
+  onViewInsights?: (query: string) => void;
   searchTerm?: string;
   showBookmarkedOnly?: boolean;
 }
 
 export const RecentSearches = ({ 
-  onSelectSearch, 
-  onViewCandidates,
-  onSearchSelect,
-  onViewBookmarks,
+  onViewInsights,
   searchTerm: externalSearchTerm,
   showBookmarkedOnly = false
 }: RecentSearchesProps) => {
@@ -85,48 +78,46 @@ export const RecentSearches = ({
     );
   };
 
-  const handleSearchSelect = (search: any) => {
-    if (onSearchSelect) {
-      onSearchSelect(search);
-    } else if (onSelectSearch) {
-      onSelectSearch(search.id);
-    }
-  };
-
   const renderSearchCard = (search: any) => (
-    <Card key={search.id} className="border-slate-200 hover:border-primary/50 transition-colors cursor-pointer group">
-      <CardContent className="p-4">
+    <Card key={search.id} className="border-slate-200 hover:border-primary/50 hover:shadow-md transition-all duration-200 group">
+      <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <h3 className="font-semibold text-slate-900 group-hover:text-primary transition-colors">
+            <div className="flex items-center gap-2 mb-3">
+              <h3 className="font-semibold text-lg text-slate-900 group-hover:text-primary transition-colors">
                 {search.title}
               </h3>
             </div>
             
-            <div className="flex items-center gap-4 text-sm text-slate-600 mb-3">
-              <div className="flex items-center gap-1">
+            <div className="flex items-center gap-6 text-sm text-slate-600 mb-4">
+              <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
-                {new Date(search.date).toLocaleDateString()}
+                <span>{new Date(search.date).toLocaleDateString()}</span>
               </div>
               {search.candidatesFound > 0 && (
-                <div className="flex items-center gap-1">
-                  <span>{search.candidatesFound} candidates found</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{search.candidatesFound}</span>
+                  <span>candidates found</span>
                 </div>
               )}
             </div>
 
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleSearchSelect(search)}
-                className="text-primary border-primary hover:bg-primary hover:text-white"
-              >
-                <BarChart3 className="h-4 w-4 mr-1" />
-                View Insights
-              </Button>
+            <div className="text-sm text-slate-500">
+              Search query: "{search.query}"
             </div>
+          </div>
+
+          <div className="ml-4">
+            <Button 
+              variant="default" 
+              size="sm"
+              onClick={() => onViewInsights?.(search.query)}
+              className="bg-primary hover:bg-primary/90 text-white shadow-sm"
+            >
+              <BarChart3 className="h-4 w-4 mr-2" />
+              View Insights
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
           </div>
         </div>
       </CardContent>
@@ -147,12 +138,12 @@ export const RecentSearches = ({
               placeholder="Search your saved searches..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-10 border-slate-200"
             />
           </div>
         </div>
         <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[180px] border-slate-200">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
@@ -167,23 +158,27 @@ export const RecentSearches = ({
 
       {/* Content based on showBookmarkedOnly flag */}
       {showBookmarkedOnly ? (
-        <div className="grid gap-4">
+        <div className="space-y-4">
           {filterSearches(searchesToShow).map(renderSearchCard)}
           {filterSearches(searchesToShow).length === 0 && (
             <Card className="border-slate-200">
-              <CardContent className="text-center py-8">
-                <p className="text-slate-500">No bookmarked searches yet.</p>
+              <CardContent className="text-center py-12">
+                <Search className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                <p className="text-slate-500 text-lg">No bookmarked searches yet.</p>
+                <p className="text-slate-400 text-sm mt-2">Your bookmarked searches will appear here.</p>
               </CardContent>
             </Card>
           )}
         </div>
       ) : (
-        <div className="grid gap-4">
+        <div className="space-y-4">
           {filterSearches(recentSearches).map(renderSearchCard)}
           {filterSearches(recentSearches).length === 0 && (
             <Card className="border-slate-200">
-              <CardContent className="text-center py-8">
-                <p className="text-slate-500">No recent searches found.</p>
+              <CardContent className="text-center py-12">
+                <Clock className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                <p className="text-slate-500 text-lg">No recent searches found.</p>
+                <p className="text-slate-400 text-sm mt-2">Your search history will appear here.</p>
               </CardContent>
             </Card>
           )}
