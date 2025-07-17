@@ -79,10 +79,18 @@ export const CandidateCard = ({
         <CardContent className="p-4">
           {/* Header - Masked */}
           <div className="mb-3">
-            <h3 className="font-medium text-slate-800 text-sm">
-              {candidate.designation} at {candidate.tier === 'Unicorn' ? 'Unicorn' : candidate.tier === 'FAANG' ? 'FAANG' : 'Top Tier'} Company
-            </h3>
-            <p className="text-xs text-slate-500 mt-1">Name hidden until unlocked</p>
+            <div className="flex items-center justify-between">
+              <h3 className="font-medium text-slate-800 text-sm">
+                {candidate.designation}
+              </h3>
+              <Badge variant="secondary" className="text-xs px-2 py-0.5">
+                {candidate.tier === 'Unicorn' ? '🦄' : candidate.tier === 'FAANG' ? '🏢' : '⭐'} {candidate.tier}
+              </Badge>
+            </div>
+            <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+              <Unlock className="h-3 w-3" />
+              Profile details locked - unlock to view
+            </p>
           </div>
 
           {/* CTC & Experience */}
@@ -134,22 +142,23 @@ export const CandidateCard = ({
           {/* Action Buttons */}
           <div className="flex gap-2">
             <Button 
-              onClick={() => onViewProfile(candidate.id)}
+              onClick={() => {
+                // Navigate to external product for deep dive
+                window.open(`https://candidate-portal.naukrix.com/profile/${candidate.id}`, '_blank');
+              }}
               size="sm" 
               className="flex-1 bg-blue-600 hover:bg-blue-700 text-xs"
-              disabled={!candidate.isUnlocked && unlocksLeft <= 0}
             >
-              {candidate.isUnlocked ? (
-                <>
-                  <Eye className="h-3 w-3 mr-1" />
-                  View Profile
-                </>
-              ) : (
-                <>
-                  <Unlock className="h-3 w-3 mr-1" />
-                  {compact ? 'Unlock' : 'Unlock Profile'}
-                </>
-              )}
+              <Eye className="h-3 w-3 mr-1" />
+              View Full Profile
+            </Button>
+            <Button 
+              onClick={() => onShortlist(candidate.id)}
+              variant="outline" 
+              size="sm"
+              className="bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100"
+            >
+              <Star className="h-3 w-3" />
             </Button>
             <Button 
               onClick={handleSave}
@@ -342,15 +351,19 @@ export const CandidateCard = ({
             onClick={() => onShortlist(candidate.id)}
             className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white"
           >
+            <Star className="h-4 w-4 mr-2" />
             Shortlist Candidate
           </Button>
           <Button 
-            onClick={() => onViewProfile(candidate.id)}
+            onClick={() => {
+              // Navigate to external product for deep dive
+              window.open(`https://candidate-portal.naukrix.com/profile/${candidate.id}`, '_blank');
+            }}
             variant="outline"
             className="px-4"
-            disabled={!candidate.isUnlocked && unlocksLeft <= 0}
           >
-            {candidate.isUnlocked ? 'View Profile' : 'Unlock Profile'}
+            <Eye className="h-4 w-4 mr-2" />
+            View Full Profile
           </Button>
         </div>
 

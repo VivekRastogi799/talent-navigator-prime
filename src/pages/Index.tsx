@@ -44,7 +44,12 @@ const Index = () => {
   }
 
   if (!showDashboard) {
-    return <LandingPage onSearch={(query, type) => handleSearch(query)} />;
+    return (
+      <LandingPage 
+        onSearch={(query, type) => handleSearch(query)} 
+        onViewCandidateHub={() => setShowCandidateHub(true)}
+      />
+    );
   }
 
   return (

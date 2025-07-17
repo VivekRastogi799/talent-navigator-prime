@@ -10,9 +10,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface LandingPageProps {
   onSearch: (query: string, type: 'jd' | 'skill') => void;
+  onViewCandidateHub: () => void;
 }
 
-export const LandingPage = ({ onSearch }: LandingPageProps) => {
+export const LandingPage = ({ onSearch, onViewCandidateHub }: LandingPageProps) => {
   const [jdText, setJdText] = useState("");
   const [skillQuery, setSkillQuery] = useState("");
 
@@ -50,13 +51,36 @@ export const LandingPage = ({ onSearch }: LandingPageProps) => {
             <h1 className="text-4xl font-bold text-slate-800 mb-4">
               Discover Top-Tier Talent in Seconds
             </h1>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-6">
               An AI-powered talent intelligence platform built exclusively for hiring premium candidates.
             </p>
+            
+            {/* Quick Actions */}
+            <div className="flex gap-4 justify-center">
+              <Button
+                onClick={onViewCandidateHub}
+                variant="outline"
+                className="bg-white border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50"
+              >
+                <Users className="h-4 w-4 mr-2" />
+                Browse Candidates
+              </Button>
+              <Button
+                onClick={() => {
+                  const element = document.getElementById('search-section');
+                  element?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Search className="h-4 w-4 mr-2" />
+                Start Search
+              </Button>
+            </div>
           </div>
 
           {/* Search Tabs */}
-          <Tabs defaultValue="jd" className="max-w-4xl mx-auto">
+          <div id="search-section">
+            <Tabs defaultValue="jd" className="max-w-4xl mx-auto">
             <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger value="jd" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
@@ -165,7 +189,8 @@ export const LandingPage = ({ onSearch }: LandingPageProps) => {
                 </CardContent>
               </Card>
             </TabsContent>
-          </Tabs>
+            </Tabs>
+          </div>
         </div>
       </div>
 

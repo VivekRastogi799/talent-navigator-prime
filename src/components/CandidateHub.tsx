@@ -88,18 +88,30 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-800">Candidate Hub</h1>
-          <p className="text-slate-600">Manage your searches, shortlists, and evaluations</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Header Navigation */}
+      <header className="bg-white border-b border-slate-200 shadow-sm">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-4">
+            <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+              NaukriX
+            </div>
+            <span className="text-slate-400">•</span>
+            <h1 className="text-xl font-bold text-slate-800">Candidate Hub</h1>
+          </div>
+          <Button onClick={onStartNewSearch} className="bg-blue-600 hover:bg-blue-700">
+            <Search className="h-4 w-4 mr-2" />
+            Start New Search
+          </Button>
         </div>
-        <Button onClick={onStartNewSearch} className="bg-blue-600 hover:bg-blue-700">
-          <Search className="h-4 w-4 mr-2" />
-          Start New Search
-        </Button>
-      </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+        {/* Welcome Section */}
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-slate-800 mb-2">Your Candidate Discovery Hub</h2>
+          <p className="text-slate-600">Manage searches, build shortlists, and evaluate premium talent</p>
+        </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-4 gap-4">
@@ -165,6 +177,7 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
         onViewProfile={onViewProfile}
         onShortlist={(id) => console.log('Shortlist', id)}
       />
+      </div>
     </div>
   );
 };
