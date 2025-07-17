@@ -1,9 +1,9 @@
+
 import { useState } from "react";
 import { Search, Star, Clock, Users, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { RecentSearches } from "./candidate/RecentSearches";
 import { ShortlistManager } from "./candidate/ShortlistManager";
 import { CandidateComparison } from "./candidate/CandidateComparison";
@@ -14,10 +14,10 @@ interface CandidateHubProps {
 }
 
 const quickStats = [
-  { label: "Total Searches", value: "24", icon: Search, color: "blue" },
-  { label: "Shortlisted", value: "8", icon: Star, color: "yellow" },
+  { label: "Total Searches", value: "24", icon: Search, color: "indigo" },
+  { label: "Shortlisted", value: "8", icon: Star, color: "amber" },
   { label: "Profiles Viewed", value: "45", icon: Users, color: "green" },
-  { label: "Success Rate", value: "68%", icon: TrendingUp, color: "purple" }
+  { label: "Success Rate", value: "68%", icon: TrendingUp, color: "violet" }
 ];
 
 export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubProps) => {
@@ -93,13 +93,13 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
       <header className="bg-white border-b border-slate-200 shadow-sm">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-4">
-            <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              NaukriX
+            <div className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-800 bg-clip-text text-transparent">
+              Xtract
             </div>
             <span className="text-slate-400">•</span>
             <h1 className="text-xl font-bold text-slate-800">Candidate Hub</h1>
           </div>
-          <Button onClick={onStartNewSearch} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={onStartNewSearch} className="bg-indigo-600 hover:bg-indigo-700">
             <Search className="h-4 w-4 mr-2" />
             Start New Search
           </Button>

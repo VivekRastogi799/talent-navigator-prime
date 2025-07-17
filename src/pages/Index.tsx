@@ -68,10 +68,10 @@ const Index = () => {
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
             <div 
-              className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent cursor-pointer"
+              className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-800 bg-clip-text text-transparent cursor-pointer"
               onClick={() => setShowDashboard(false)}
             >
-              NaukriX
+              Xtract
             </div>
           </div>
           
@@ -84,16 +84,16 @@ const Index = () => {
               variant="outline" 
               size="sm" 
               onClick={() => setShowCandidateHub(true)}
-              className="text-slate-600 border-slate-300 hover:border-blue-500"
+              className="text-slate-600 border-slate-300 hover:border-indigo-500"
             >
               <Users className="h-4 w-4 mr-2" />
               Candidate Hub
             </Button>
-            <Button variant="outline" size="sm" className="text-slate-600 border-slate-300 hover:border-blue-500">
+            <Button variant="outline" size="sm" className="text-slate-600 border-slate-300 hover:border-indigo-500">
               <BookmarkPlus className="h-4 w-4 mr-2" />
               Saved Reports
             </Button>
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+            <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700">
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
