@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Search, Users, Sparkles, FileText } from "lucide-react";
+import { Search, Users, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -71,9 +71,6 @@ export const LandingPage = ({ onSearch, onViewCandidateHub }: LandingPageProps) 
             </p>
           </div>
 
-          {/* Live Talent Stats */}
-          <LiveTalentStats />
-
           {/* Search Section */}
           <div className="max-w-5xl mx-auto mb-8">
             <Tabs defaultValue="jd" className="w-full">
@@ -83,7 +80,7 @@ export const LandingPage = ({ onSearch, onViewCandidateHub }: LandingPageProps) 
                   className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg font-medium transition-all duration-300"
                 >
                   <Sparkles className="h-4 w-4" />
-                  JD-based NLP Search
+                  NLP Search
                 </TabsTrigger>
                 <TabsTrigger 
                   value="skill" 
@@ -139,6 +136,9 @@ export const LandingPage = ({ onSearch, onViewCandidateHub }: LandingPageProps) 
             </Tabs>
           </div>
 
+          {/* Live Talent Stats */}
+          <LiveTalentStats />
+
           {/* Saved Candidates & Past Searches */}
           <div className="text-center mb-12">
             <Button
@@ -181,7 +181,7 @@ export const LandingPage = ({ onSearch, onViewCandidateHub }: LandingPageProps) 
             <Card className="glass-card premium-shadow border-slate-200 hover:shadow-xl transition-all duration-300">
               <CardContent className="pt-8 pb-6 text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FileText className="h-8 w-8 text-primary" />
+                  <Search className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold text-slate-800 mb-3">Market Intelligence</h3>
                 <p className="text-slate-600 leading-relaxed">

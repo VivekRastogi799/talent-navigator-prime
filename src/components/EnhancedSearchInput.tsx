@@ -21,32 +21,52 @@ export const EnhancedSearchInput = ({ onSearch, placeholder = "Enter designation
   const [query, setQuery] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [booleanOff, setBooleanOff] = useState(false);
+  const [booleanOff, setBooleanOff] = useState(true);
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
+  const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const mockSuggestions: SearchSuggestion[] = [
-    { text: "Product Management", category: "skill", count: 1247 },
-    { text: "Product Planning", category: "skill", count: 892 },
-    { text: "Product Life Cycle Management", category: "skill", count: 643 },
-    { text: "Product Pricing", category: "skill", count: 432 },
+    { text: "Product Manager", category: "designation", count: 1247 },
+    { text: "Senior Product Manager", category: "designation", count: 892 },
+    { text: "Product Management", category: "skill", count: 643 },
     { text: "Product Strategy", category: "skill", count: 743 },
-    { text: "Product Portfolio", category: "skill", count: 567 },
-    { text: "Product Launch", category: "skill", count: 445 },
-    { text: "Product Marketing", category: "skill", count: 389 },
-    { text: "Product Positioning", category: "skill", count: 334 },
-    { text: "Product Innovation", category: "skill", count: 298 },
-    { text: "Product Life Cycle", category: "skill", count: 267 },
-    { text: "Product Portfolio Management", category: "skill", count: 234 },
-    { text: "Product Roadmap", category: "skill", count: 201 },
-    { text: "Product Promotion", category: "skill", count: 189 }
+    { text: "Product Analytics", category: "skill", count: 567 },
+    { text: "Product Planning", category: "skill", count: 445 },
+    { text: "Product Launch", category: "skill", count: 389 },
+    { text: "Product Marketing", category: "skill", count: 334 },
+    { text: "Product Positioning", category: "skill", count: 298 },
+    { text: "Product Innovation", category: "skill", count: 267 },
+    { text: "Growth Manager", category: "designation", count: 234 },
+    { text: "Product Owner", category: "designation", count: 201 },
+    { text: "Associate Product Manager", category: "designation", count: 189 },
+    { text: "VP Product", category: "designation", count: 156 }
   ];
 
-  const aiSuggestedSkills = [
-    "Product Strategy", "Product Portfolio", "Product Launch", "Product Marketing",
-    "Product Positioning", "Product Innovation", "Product Life Cycle",
-    "Product Portfolio Management", "Product Roadmap", "Product Promotion"
-  ];
+  // Dynamic AI suggestions based on current query
+  const getAISuggestions = (currentQuery: string) => {
+    if (currentQuery.toLowerCase().includes("product")) {
+      return [
+        "Product Strategy", "Product Portfolio", "Product Launch", "Product Marketing",
+        "Product Positioning", "Product Innovation", "Product Life Cycle",
+        "Product Portfolio Management", "Product Roadmap", "Product Promotion"
+      ];
+    } else if (currentQuery.toLowerCase().includes("growth")) {
+      return [
+        "Growth Hacking", "Growth Strategy", "User Acquisition", "Conversion Optimization",
+        "A/B Testing", "Analytics", "Performance Marketing", "Customer Retention"
+      ];
+    } else if (currentQuery.toLowerCase().includes("data")) {
+      return [
+        "Data Analysis", "Machine Learning", "Python", "SQL", "Statistics",
+        "Data Visualization", "Big Data", "Data Mining", "Predictive Analytics"
+      ];
+    }
+    return [
+      "Leadership", "Strategy", "Analytics", "Communication", "Problem Solving",
+      "Project Management", "Team Management", "Innovation"
+    ];
+  };
 
   useEffect(() => {
     if (query.length > 0) {
@@ -56,8 +76,21 @@ export const EnhancedSearchInput = ({ onSearch, placeholder = "Enter designation
       );
       setSuggestions(filtered.slice(0, 8));
       setShowSuggestions(true);
+      
+      // Update AI suggestions based on current query
+      if (selectedSkills.length > 0) {
+        setAiSuggestions(getAISuggestions(selectedSkills[selectedSkills.length - 1]));
+      } else {
+        setAiSuggestions(getAISuggestions(query));
+      }
     } else {
       setShowSuggestions(false);
+      // Show default AI suggestions when no query
+      if (selectedSkills.length > 0) {
+        setAiSuggestions(getAISuggestions(selectedSkills[selectedSkills.length - 1]));
+      } else {
+        setAiSuggestions([]);
+      }
     }
   }, [query, selectedSkills]);
 
@@ -67,14 +100,20 @@ export const EnhancedSearchInput = ({ onSearch, placeholder = "Enter designation
       setSelectedSkills(newSkills);
       setQuery("");
       setShowSuggestions(false);
-      onSearch(newSkills.join(booleanOff ? " OR " : " AND "));
+      // Update AI suggestions based on newly added skill
+      setAiSuggestions(getAISuggestions(skill));
     }
   };
 
   const removeSkill = (skill: string) => {
     const newSkills = selectedSkills.filter(s => s !== skill);
     setSelectedSkills(newSkills);
-    onSearch(newSkills.join(booleanOff ? " OR " : " AND "));
+    // Update AI suggestions based on remaining skills
+    if (newSkills.length > 0) {
+      setAiSuggestions(getAISuggestions(newSkills[newSkills.length - 1]));
+    } else {
+      setAiSuggestions([]);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -83,20 +122,25 @@ export const EnhancedSearchInput = ({ onSearch, placeholder = "Enter designation
     }
   };
 
+  const handleSearch = () => {
+    if (selectedSkills.length > 0) {
+      onSearch(selectedSkills.join(booleanOff ? " AND " : " OR "));
+    }
+  };
+
   return (
     <div className="w-full space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-800">Get talent trends</h3>
+      {/* Boolean Toggle */}
+      <div className="flex items-center justify-end">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-slate-600">Boolean off</span>
+          <span className="text-sm text-slate-600">Boolean</span>
           <Switch 
             checked={!booleanOff} 
             onCheckedChange={(checked) => setBooleanOff(!checked)}
           />
-          <div className="w-4 h-4 rounded-full border border-slate-300 flex items-center justify-center">
-            <div className="w-2 h-2 rounded-full bg-slate-400"></div>
-          </div>
+          <span className="text-xs text-slate-500">
+            {booleanOff ? 'AND' : 'OR'}
+          </span>
         </div>
       </div>
 
@@ -108,7 +152,7 @@ export const EnhancedSearchInput = ({ onSearch, placeholder = "Enter designation
         </div>
         
         {/* Selected Skills Container */}
-        <div className="min-h-[80px] p-4 border-2 border-slate-200 rounded-xl bg-white focus-within:border-primary transition-colors">
+        <div className="min-h-[80px] p-4 border-2 border-slate-200 rounded-xl bg-white focus-within:border-primary transition-colors relative">
           <div className="flex flex-wrap gap-2 mb-2">
             {selectedSkills.map((skill, index) => (
               <Badge 
@@ -135,27 +179,50 @@ export const EnhancedSearchInput = ({ onSearch, placeholder = "Enter designation
               />
             </div>
           </div>
+
+          {/* Suggestions Dropdown */}
+          {showSuggestions && suggestions.length > 0 && (
+            <div className="absolute top-full left-0 right-0 bg-white border border-slate-200 rounded-lg shadow-lg z-50 mt-1 max-h-80 overflow-y-auto">
+              {suggestions.map((suggestion, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-b-0"
+                  onClick={() => addSkill(suggestion.text)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="font-medium text-slate-800">{suggestion.text}</div>
+                    <Badge variant="outline" className="text-xs">
+                      {suggestion.category}
+                    </Badge>
+                  </div>
+                  <div className="text-sm text-slate-400">{suggestion.count} results</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* AI Suggested Skills */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-purple-600" />
-            <span className="text-sm font-medium text-purple-600">AI suggested key skills</span>
+        {/* AI Suggested Skills - Only show when we have selections */}
+        {selectedSkills.length > 0 && aiSuggestions.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-purple-600" />
+              <span className="text-sm font-medium text-purple-600">AI suggested key skills</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {aiSuggestions.filter(skill => !selectedSkills.includes(skill)).slice(0, 8).map((skill) => (
+                <Badge 
+                  key={skill}
+                  variant="outline" 
+                  className="cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-colors text-sm py-1 px-3"
+                  onClick={() => addSkill(skill)}
+                >
+                  {skill}
+                </Badge>
+              ))}
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {aiSuggestedSkills.map((skill) => (
-              <Badge 
-                key={skill}
-                variant="outline" 
-                className="cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-colors text-sm py-1 px-3"
-                onClick={() => addSkill(skill)}
-              >
-                {skill}
-              </Badge>
-            ))}
-          </div>
-        </div>
+        )}
 
         {/* Experience Range */}
         <div className="grid grid-cols-3 gap-4 mt-6">
@@ -177,34 +244,17 @@ export const EnhancedSearchInput = ({ onSearch, placeholder = "Enter designation
           </div>
         </div>
 
-        {/* Submit Button */}
+        {/* Search Button */}
         <div className="pt-4">
           <Button 
             className="w-full bg-primary hover:bg-primary/90 text-white py-3 text-base font-medium"
-            onClick={() => onSearch(selectedSkills.join(booleanOff ? " OR " : " AND "))}
+            onClick={handleSearch}
+            disabled={selectedSkills.length === 0}
           >
-            Submit
+            Search
           </Button>
         </div>
       </div>
-
-      {/* Suggestions Dropdown */}
-      {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 bg-white border border-slate-200 rounded-lg shadow-lg z-50 mt-1 max-h-80 overflow-y-auto">
-          {suggestions.map((suggestion, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-b-0"
-              onClick={() => addSkill(suggestion.text)}
-            >
-              <div className="flex items-center gap-3">
-                <div className="font-medium text-slate-800">{suggestion.text}</div>
-              </div>
-              <div className="text-sm text-slate-400">{suggestion.count} results</div>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 };

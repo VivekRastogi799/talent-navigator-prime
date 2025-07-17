@@ -11,7 +11,7 @@ interface StatItem {
 }
 
 const initialStats: StatItem[] = [
-  { label: "Premium Profiles", value: "2.8M", icon: Users, color: "text-naukri-primary", suffix: "+" },
+  { label: "Premium Profiles", value: "2.8M", icon: Users, color: "text-primary", suffix: "+" },
   { label: "Active Today", value: "14K", icon: Activity, color: "text-green-600", suffix: "" },
   { label: "AI Match Accuracy", value: "99", icon: Target, color: "text-violet-600", suffix: "%" },
   { label: "Success Rate", value: "87", icon: TrendingUp, color: "text-amber-600", suffix: "%" }
@@ -44,7 +44,7 @@ export const LiveTalentStats = () => {
       {stats.map((stat, index) => (
         <div 
           key={index} 
-          className="glass-card premium-shadow rounded-xl p-6 text-center hover:shadow-xl transition-all duration-300 border border-naukri-blue-100"
+          className="glass-card premium-shadow rounded-xl p-6 text-center hover:shadow-xl transition-all duration-300 border border-slate-200"
         >
           <div className="flex items-center justify-center mb-3">
             <div className={`p-3 rounded-full bg-slate-50 ${stat.color}`}>
@@ -55,7 +55,7 @@ export const LiveTalentStats = () => {
             key={`${index}-${animationKey}`}
             className="text-3xl font-bold text-slate-800 mb-2 animate-counter"
           >
-            {stat.value}<span className="text-naukri-primary">{stat.suffix}</span>
+            {stat.value}<span className="text-slate-800">{stat.suffix}</span>
           </div>
           <div className="text-sm text-slate-600 font-medium">
             {stat.label}
