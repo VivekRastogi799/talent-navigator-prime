@@ -36,7 +36,7 @@ const Index = () => {
       <CandidateHub 
         onStartNewSearch={() => {
           setShowCandidateHub(false);
-          setShowDashboard(true);
+          setShowDashboard(false);
         }}
         onViewProfile={(id) => console.log('View profile:', id)}
       />
@@ -53,7 +53,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-white">
       {/* Top Header */}
       <header className="bg-white border-b border-slate-200 shadow-sm">
         <div className="flex items-center justify-between px-6 py-4">
@@ -68,10 +68,10 @@ const Index = () => {
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
             <div 
-              className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-800 bg-clip-text text-transparent cursor-pointer"
+              className="text-2xl font-bold text-naukri-primary cursor-pointer"
               onClick={() => setShowDashboard(false)}
             >
-              Xtract
+              TopTier
             </div>
           </div>
           
@@ -84,16 +84,16 @@ const Index = () => {
               variant="outline" 
               size="sm" 
               onClick={() => setShowCandidateHub(true)}
-              className="text-slate-600 border-slate-300 hover:border-indigo-500"
+              className="text-slate-600 border-slate-300 hover:border-naukri-primary hover:text-naukri-primary"
             >
               <Users className="h-4 w-4 mr-2" />
-              Candidate Hub
+              Shortlists & Past Searches
             </Button>
-            <Button variant="outline" size="sm" className="text-slate-600 border-slate-300 hover:border-indigo-500">
+            <Button variant="outline" size="sm" className="text-slate-600 border-slate-300 hover:border-naukri-primary hover:text-naukri-primary">
               <BookmarkPlus className="h-4 w-4 mr-2" />
               Saved Reports
             </Button>
-            <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700">
+            <Button size="sm" className="bg-naukri-primary hover:bg-naukri-primary-dark">
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>

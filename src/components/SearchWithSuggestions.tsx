@@ -108,7 +108,7 @@ export const SearchWithSuggestions = ({ onSearch }: SearchWithSuggestionsProps) 
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4 z-10" />
         
         {/* Selected Keywords */}
-        <div className="flex flex-wrap gap-2 pl-10 pr-20 py-2 min-h-[42px] bg-slate-50 border border-slate-200 rounded-lg focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+        <div className="flex flex-wrap gap-2 pl-10 pr-20 py-2 min-h-[42px] bg-slate-50 border border-slate-200 rounded-lg focus-within:border-naukri-primary focus-within:ring-1 focus-within:ring-naukri-primary">
           {selectedKeywords.map((keyword, index) => (
             <Badge key={index} variant="secondary" className="flex items-center gap-1">
               {keyword}
@@ -132,7 +132,7 @@ export const SearchWithSuggestions = ({ onSearch }: SearchWithSuggestionsProps) 
         <Button
           onClick={handleSearch}
           size="sm"
-          className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 px-3 bg-blue-600 hover:bg-blue-700"
+          className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 px-3 bg-naukri-primary hover:bg-naukri-primary-dark"
         >
           Search
         </Button>

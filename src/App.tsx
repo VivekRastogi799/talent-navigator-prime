@@ -16,8 +16,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/Xtract" replace />} />
-          <Route path="/Xtract" element={<Index />} />
+          <Route path="/" element={<Navigate to="/TopTier" replace />} />
+          <Route path="/TopTier" element={<Index />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
