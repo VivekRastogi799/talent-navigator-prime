@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Filter, Users, TrendingUp, MoreVertical, Eye, Star, MapPin, DollarSign, Calendar, Building, Target, Award, GraduationCap } from 'lucide-react';
+import { Filter, Users, TrendingUp, MoreVertical, Eye, Star, MapPin, DollarSign, Calendar, Building, Target, Award, GraduationCap, Briefcase } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -216,7 +216,7 @@ export const ShortlistManager = ({
         </div>
       </div>
 
-      {/* Enhanced Candidate List */}
+      {/* Enhanced Candidate List - Redesigned based on reference */}
       <div className="space-y-4">
         {candidatesToShow.map((candidate) => (
           <Card key={candidate.id} className="border-slate-200 hover:shadow-lg hover:border-primary/30 transition-all duration-200">
@@ -226,81 +226,95 @@ export const ShortlistManager = ({
                   type="checkbox"
                   checked={selectedCandidates.includes(candidate.id)}
                   onChange={() => handleCandidateSelect(candidate.id)}
-                  className="mt-2 h-4 w-4 text-primary focus:ring-primary border-slate-300 rounded"
+                  className="mt-3 h-4 w-4 text-primary focus:ring-primary border-slate-300 rounded"
                 />
                 
                 <div className="flex-1">
+                  {/* Header Section */}
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-xl font-semibold text-slate-900">{candidate.name}</h3>
-                        <Badge variant={candidate.tier === 'FAANG' ? 'default' : 'secondary'} className="text-xs">
+                        <h3 className="text-xl font-bold text-slate-900">{candidate.name}</h3>
+                        <Badge variant={candidate.tier === 'FAANG' ? 'default' : 'secondary'} className="text-xs font-medium">
                           {candidate.tier}
                         </Badge>
+                        <Badge variant={candidate.status === 'Active' ? 'default' : 'secondary'} className="text-xs">
+                          {candidate.status}
+                        </Badge>
                       </div>
-                      <p className="text-slate-600 font-medium mb-1">{candidate.designation}</p>
-                      <div className="flex items-center gap-2 text-sm text-slate-500">
-                        <Building className="h-4 w-4" />
-                        <span>{candidate.company}</span>
-                      </div>
+                      <p className="text-lg font-semibold text-slate-700 mb-2">{candidate.designation}</p>
                     </div>
                     <div className="text-right">
                       <div className="flex items-center gap-2 mb-1">
-                        <Award className="h-5 w-5 text-primary" />
-                        <span className="text-2xl font-bold text-primary">{candidate.matchScore}%</span>
+                        <div className="text-2xl font-bold text-primary">{candidate.matchScore}%</div>
+                        <Badge variant="outline" className="text-xs border-primary text-primary">
+                          Match
+                        </Badge>
                       </div>
-                      <div className="text-sm text-slate-500">Match Score</div>
                     </div>
                   </div>
 
+                  {/* Key Details Row */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
                     <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-slate-400" />
-                      <span className="text-slate-600">{candidate.experience} experience</span>
+                      <Briefcase className="h-4 w-4 text-slate-500" />
+                      <span className="text-slate-700 font-medium">{candidate.experience}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-slate-400" />
-                      <span className="text-slate-600">{candidate.ctc} current</span>
+                      <MapPin className="h-4 w-4 text-slate-500" />
+                      <span className="text-slate-700">{candidate.location}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-slate-400" />
-                      <span className="text-slate-600">{candidate.location}</span>
+                      <Building className="h-4 w-4 text-slate-500" />
+                      <span className="text-slate-700 font-medium">{candidate.company}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <GraduationCap className="h-4 w-4 text-slate-400" />
-                      <span className="text-slate-600">{candidate.education}</span>
+                      <DollarSign className="h-4 w-4 text-slate-500" />
+                      <span className="text-slate-700 font-semibold">{candidate.ctc}</span>
                     </div>
                   </div>
 
+                  {/* Education and Additional Info */}
                   <div className="mb-4">
-                    <p className="text-sm text-slate-600 mb-3 font-medium">{candidate.whyRelevant}</p>
+                    <div className="flex items-center gap-2 mb-2">
+                      <GraduationCap className="h-4 w-4 text-slate-500" />
+                      <span className="text-sm text-slate-600">{candidate.education}</span>
+                    </div>
+                    <p className="text-sm text-slate-600 font-medium bg-slate-50 px-3 py-2 rounded-lg border">
+                      {candidate.whyRelevant}
+                    </p>
+                  </div>
+
+                  {/* Skills Section */}
+                  <div className="mb-4">
                     <div className="flex flex-wrap gap-2">
                       {candidate.skills.slice(0, 5).map((skill, index) => (
-                        <Badge key={index} variant="outline" className="text-xs border-slate-200">
+                        <Badge key={index} variant="outline" className="text-xs border-slate-300 bg-slate-50">
                           {skill}
                         </Badge>
                       ))}
                       {candidate.skills.length > 5 && (
-                        <Badge variant="outline" className="text-xs border-slate-200">
+                        <Badge variant="outline" className="text-xs border-slate-300 bg-slate-50 text-slate-500">
                           +{candidate.skills.length - 5} more
                         </Badge>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <Badge variant={candidate.status === 'Active' ? 'default' : 'secondary'}>
-                        {candidate.status}
-                      </Badge>
-                      <span className="text-sm text-slate-500">
-                        Notice: {candidate.noticePeriod} • Last active: {candidate.lastActive}
-                      </span>
+                  {/* Footer with Actions */}
+                  <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                    <div className="flex items-center gap-4 text-sm text-slate-500">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        <span>Notice: {candidate.noticePeriod}</span>
+                      </div>
+                      <div>Last active: {candidate.lastActive}</div>
                     </div>
                     
                     <div className="flex gap-3">
-                      <Button variant="outline" size="sm" className="border-slate-200">
-                        <Star className="h-4 w-4" />
+                      <Button variant="outline" size="sm" className="border-slate-200 text-primary hover:bg-primary hover:text-white">
+                        <Star className="h-4 w-4 mr-1" />
+                        Shortlist
                       </Button>
                       <Button 
                         variant="default" 
