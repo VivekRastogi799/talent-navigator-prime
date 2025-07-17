@@ -54,6 +54,18 @@ All colors MUST be HSL.
     --naukri-primary-dark: 206 100% 27%;
     --naukri-secondary: 210 40% 96.1%;
     --naukri-accent: 206 100% 95%;
+    --naukri-gradient-start: 206 100% 31%;
+    --naukri-gradient-end: 206 100% 35%;
+    --naukri-blue-50: 206 100% 97%;
+    --naukri-blue-100: 206 100% 93%;
+    --naukri-blue-200: 206 100% 86%;
+    --naukri-blue-300: 206 100% 75%;
+    --naukri-blue-400: 206 100% 65%;
+    --naukri-blue-500: 206 100% 31%;
+    --naukri-blue-600: 206 100% 27%;
+    --naukri-blue-700: 206 100% 23%;
+    --naukri-blue-800: 206 100% 19%;
+    --naukri-blue-900: 206 100% 15%;
   }
 
   .dark {
@@ -131,4 +143,129 @@ All colors MUST be HSL.
   .bg-naukri-accent {
     background-color: hsl(var(--naukri-accent));
   }
+  
+  .bg-naukri-gradient {
+    background: linear-gradient(135deg, hsl(var(--naukri-gradient-start)), hsl(var(--naukri-gradient-end)));
+  }
+  
+  .bg-naukri-blue-50 {
+    background-color: hsl(var(--naukri-blue-50));
+  }
+  
+  .bg-naukri-blue-100 {
+    background-color: hsl(var(--naukri-blue-100));
+  }
+  
+  .bg-naukri-blue-200 {
+    background-color: hsl(var(--naukri-blue-200));
+  }
+  
+  .text-naukri-blue-600 {
+    color: hsl(var(--naukri-blue-600));
+  }
+  
+  .text-naukri-blue-700 {
+    color: hsl(var(--naukri-blue-700));
+  }
+  
+  .border-naukri-blue-200 {
+    border-color: hsl(var(--naukri-blue-200));
+  }
+  
+  .hover\:bg-naukri-blue-50:hover {
+    background-color: hsl(var(--naukri-blue-50));
+  }
+  
+  .hover\:bg-naukri-blue-100:hover {
+    background-color: hsl(var(--naukri-blue-100));
+  }
+  
+  .hover\:border-naukri-primary:hover {
+    border-color: hsl(var(--naukri-primary));
+  }
+  
+  .focus\:border-naukri-primary:focus {
+    border-color: hsl(var(--naukri-primary));
+  }
+  
+  .focus\:ring-naukri-primary:focus {
+    --tw-ring-color: hsl(var(--naukri-primary));
+  }
+}
+
+/* Custom animations */
+@layer utilities {
+  .animate-counter {
+    animation: counter 2s ease-out;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+  
+  .animate-typing {
+    animation: typing 3s steps(40, end) infinite;
+  }
+}
+
+@keyframes counter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes typing {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Premium glass morphism effects */
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.premium-shadow {
+  box-shadow: 0 8px 32px rgba(0, 88, 160, 0.1);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, hsl(var(--naukri-primary)), hsl(var(--naukri-primary-light)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

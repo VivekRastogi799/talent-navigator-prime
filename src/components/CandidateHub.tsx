@@ -87,18 +87,21 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-white via-naukri-blue-50 to-naukri-blue-100">
       {/* Header Navigation */}
-      <header className="bg-white border-b border-slate-200 shadow-sm">
+      <header className="bg-white border-b border-naukri-blue-200 shadow-sm">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-4">
-            <div className="text-2xl font-bold text-naukri-primary">
+            <div className="text-2xl font-bold gradient-text">
               TopTier
             </div>
             <span className="text-slate-400">•</span>
-            <h1 className="text-xl font-bold text-slate-800">Shortlists & Past Searches</h1>
+            <h1 className="text-xl font-bold text-slate-800">Saved Candidates & Past Searches</h1>
           </div>
-          <Button onClick={onStartNewSearch} className="bg-naukri-primary hover:bg-naukri-primary-dark">
+          <Button 
+            onClick={onStartNewSearch} 
+            className="bg-naukri-primary hover:bg-naukri-primary-dark shadow-lg hover:shadow-xl transition-all duration-300"
+          >
             <Search className="h-4 w-4 mr-2" />
             New Search
           </Button>
@@ -115,9 +118,9 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
         {/* Quick Stats */}
         <div className="grid grid-cols-4 gap-4">
           {quickStats.map((stat) => (
-            <Card key={stat.label} className="p-4 border border-slate-200">
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${stat.color === 'naukri-primary' ? 'bg-naukri-accent' : `bg-${stat.color}-100`}`}>
+            <Card key={stat.label} className="glass-card premium-shadow border-naukri-blue-100">
+              <div className="flex items-center gap-3 p-4">
+                <div className={`p-2 rounded-lg ${stat.color === 'naukri-primary' ? 'bg-naukri-blue-100' : `bg-${stat.color}-100`}`}>
                   <stat.icon className={`h-5 w-5 ${stat.color === 'naukri-primary' ? 'text-naukri-primary' : `text-${stat.color}-600`}`} />
                 </div>
                 <div>
@@ -131,16 +134,25 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 bg-slate-50">
-            <TabsTrigger value="recent" className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-naukri-primary">
+          <TabsList className="grid w-full grid-cols-3 bg-white/80 backdrop-blur-sm border border-naukri-blue-200">
+            <TabsTrigger 
+              value="recent" 
+              className="flex items-center gap-2 data-[state=active]:bg-naukri-primary data-[state=active]:text-white"
+            >
               <Clock className="h-4 w-4" />
               Recent Searches
             </TabsTrigger>
-            <TabsTrigger value="shortlist" className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-naukri-primary">
+            <TabsTrigger 
+              value="shortlist" 
+              className="flex items-center gap-2 data-[state=active]:bg-naukri-primary data-[state=active]:text-white"
+            >
               <Star className="h-4 w-4" />
               Shortlisted
             </TabsTrigger>
-            <TabsTrigger value="bookmarks" className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:text-naukri-primary">
+            <TabsTrigger 
+              value="bookmarks" 
+              className="flex items-center gap-2 data-[state=active]:bg-naukri-primary data-[state=active]:text-white"
+            >
               <Search className="h-4 w-4" />
               Bookmarked Searches
             </TabsTrigger>

@@ -55,7 +55,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Top Header */}
-      <header className="bg-white border-b border-slate-200 shadow-sm">
+      <header className="bg-white border-b border-naukri-blue-200 shadow-sm">
         <div className="flex items-center justify-between px-6 py-4">
           {/* Left section */}
           <div className="flex items-center gap-4">
@@ -63,12 +63,12 @@ const Index = () => {
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-slate-600 hover:text-slate-900"
+              className="text-slate-600 hover:text-naukri-primary hover:bg-naukri-blue-50"
             >
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
             <div 
-              className="text-2xl font-bold text-naukri-primary cursor-pointer"
+              className="text-2xl font-bold gradient-text cursor-pointer"
               onClick={() => setShowDashboard(false)}
             >
               TopTier
@@ -84,23 +84,38 @@ const Index = () => {
               variant="outline" 
               size="sm" 
               onClick={() => setShowCandidateHub(true)}
-              className="text-slate-600 border-slate-300 hover:border-naukri-primary hover:text-naukri-primary"
+              className="text-naukri-blue-600 border-naukri-blue-200 hover:border-naukri-primary hover:text-naukri-primary hover:bg-naukri-blue-50"
             >
               <Users className="h-4 w-4 mr-2" />
-              Shortlists & Past Searches
+              Saved Candidates
             </Button>
-            <Button variant="outline" size="sm" className="text-slate-600 border-slate-300 hover:border-naukri-primary hover:text-naukri-primary">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-naukri-blue-600 border-naukri-blue-200 hover:border-naukri-primary hover:text-naukri-primary hover:bg-naukri-blue-50"
+            >
               <BookmarkPlus className="h-4 w-4 mr-2" />
               Saved Reports
             </Button>
-            <Button size="sm" className="bg-naukri-primary hover:bg-naukri-primary-dark">
+            <Button 
+              size="sm" 
+              className="bg-naukri-primary hover:bg-naukri-primary-dark shadow-lg hover:shadow-xl transition-all duration-300"
+            >
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
-            <Button variant="ghost" size="sm" className="text-slate-600">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-slate-600 hover:text-naukri-primary hover:bg-naukri-blue-50"
+            >
               <Settings className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="sm" className="text-slate-600">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-slate-600 hover:text-naukri-primary hover:bg-naukri-blue-50"
+            >
               <User className="h-4 w-4" />
             </Button>
           </div>

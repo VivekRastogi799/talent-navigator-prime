@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-import { ChevronDown, ChevronUp, Search, Building, MapPin, Users, DollarSign, X, Clock, Target, Award, Briefcase } from "lucide-react";
+
+import { useState, useEffect } from "react";
+import { ChevronDown, ChevronUp, Search, Building, MapPin, Users, DollarSign, X, Clock, Target, Award, Briefcase, Factory, GraduationCap, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,13 +22,31 @@ const initialLocations = [
 ];
 
 const filterCategories = {
-  "Company Type": {
+  "Company Cluster": {
     icon: Building,
     groups: {
       "FAANG": { items: ["Google", "Meta", "Amazon", "Apple", "Netflix"], count: 1250 },
       "Unicorns": { items: ["Flipkart", "Paytm", "Ola", "Swiggy", "Zomato"], count: 890 },
       "Product Companies": { items: ["Microsoft", "Adobe", "Salesforce", "Uber"], count: 675 },
       "Services": { items: ["TCS", "Infosys", "Wipro", "Accenture"], count: 2340 }
+    }
+  },
+  "Sector": {
+    icon: Factory,
+    groups: {
+      "Technology": { items: ["Fintech", "EdTech", "HealthTech", "E-commerce"], count: 1800 },
+      "Finance": { items: ["Banking", "Insurance", "Investment", "NBFCs"], count: 950 },
+      "Healthcare": { items: ["Pharma", "Biotech", "Medical Devices", "Digital Health"], count: 620 },
+      "Retail": { items: ["Fashion", "FMCG", "Food & Beverage", "Lifestyle"], count: 780 }
+    }
+  },
+  "Company Stage": {
+    icon: TrendingUp,
+    groups: {
+      "Growth": { items: ["Series A", "Series B", "Series C"], count: 650 },
+      "Unicorn": { items: ["Valued $1B+"], count: 89 },
+      "Mature": { items: ["IPO", "Public", "Established"], count: 1200 },
+      "Startup": { items: ["Pre-Series A", "Seed", "Bootstrap"], count: 450 }
     }
   },
   "Experience": {
@@ -73,20 +92,33 @@ const salaryRanges = [
   { range: "50+ LPA", count: 170 }
 ];
 
+const educationFilters = [
+  { name: "Tier 1 Education", count: 890 },
+  { name: "IIT/IIM", count: 234 },
+  { name: "Top Engineering Colleges", count: 567 },
+  { name: "MBA", count: 445 },
+  { name: "B.Tech", count: 1234 },
+  { name: "M.Tech", count: 345 }
+];
+
 export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [selectedCompanySizes, setSelectedCompanySizes] = useState<string[]>([]);
   const [selectedSalaryRanges, setSelectedSalaryRanges] = useState<string[]>([]);
+  const [selectedEducation, setSelectedEducation] = useState<string[]>([]);
   const [expandedSections, setExpandedSections] = useState({
-    companyType: true,
+    companyCluster: true,
+    sector: false,
+    companyStage: false,
     experience: true,
     workMode: false,
     noticePeriod: false,
     location: false,
     companySize: false,
-    salary: false
+    salary: false,
+    education: false
   });
 
   const handleFilterToggle = (category: string, item: string) => {
@@ -104,13 +136,11 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
     const allSelected = items.every(item => current.includes(item));
     
     if (allSelected) {
-      // Deselect all
       setSelectedFilters(prev => ({
         ...prev,
         [category]: current.filter(item => !items.includes(item))
       }));
     } else {
-      // Select all
       setSelectedFilters(prev => ({
         ...prev,
         [category]: [...new Set([...current, ...items])]
@@ -118,22 +148,64 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
     }
   };
 
+  const removeFilter = (category: string, item: string) => {
+    if (category === 'location') {
+      setSelectedLocations(prev => prev.filter(l => l !== item));
+    } else if (category === 'companySize') {
+      setSelectedCompanySizes(prev => prev.filter(s => s !== item));
+    } else if (category === 'salary') {
+      setSelectedSalaryRanges(prev => prev.filter(r => r !== item));
+    } else if (category === 'education') {
+      setSelectedEducation(prev => prev.filter(e => e !== item));
+    } else {
+      handleFilterToggle(category, item);
+    }
+  };
+
   const getAllSelectedFilters = () => {
-    const all = [
-      ...Object.values(selectedFilters).flat(),
-      ...selectedLocations,
-      ...selectedCompanySizes,
-      ...selectedSalaryRanges
-    ];
-    return all;
+    const filterMap = new Map<string, string[]>();
+    
+    Object.entries(selectedFilters).forEach(([category, items]) => {
+      items.forEach(item => {
+        filterMap.set(item, [category, item]);
+      });
+    });
+    
+    selectedLocations.forEach(location => {
+      filterMap.set(location, ['location', location]);
+    });
+    
+    selectedCompanySizes.forEach(size => {
+      filterMap.set(size, ['companySize', size]);
+    });
+    
+    selectedSalaryRanges.forEach(range => {
+      filterMap.set(range, ['salary', range]);
+    });
+    
+    selectedEducation.forEach(education => {
+      filterMap.set(education, ['education', education]);
+    });
+    
+    return filterMap;
+  };
+
+  const clearAllFilters = () => {
+    setSelectedFilters({});
+    setSelectedLocations([]);
+    setSelectedCompanySizes([]);
+    setSelectedSalaryRanges([]);
+    setSelectedEducation([]);
   };
 
   if (!isOpen) return null;
 
+  const allFilters = getAllSelectedFilters();
+
   return (
-    <div className="fixed left-0 top-20 h-[calc(100vh-80px)] w-80 bg-white border-r border-slate-200 shadow-lg z-40 overflow-hidden flex flex-col">
+    <div className="fixed left-0 top-20 h-[calc(100vh-80px)] w-80 bg-white border-r border-naukri-blue-200 shadow-xl z-40 overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b border-slate-200 bg-slate-50">
+      <div className="p-4 border-b border-naukri-blue-100 bg-naukri-blue-50">
         <h2 className="text-lg font-semibold text-slate-800 mb-3">Smart Filters</h2>
         
         {/* Search */}
@@ -143,64 +215,38 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
             placeholder="Search filters..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 border-naukri-blue-200 focus:border-naukri-primary"
           />
         </div>
 
         {/* Active Filters */}
-        {getAllSelectedFilters().length > 0 && (
+        {allFilters.size > 0 && (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <div className="text-sm font-medium text-slate-600">
-                Active Filters ({getAllSelectedFilters().length})
+              <div className="text-sm font-medium text-naukri-blue-700">
+                Active Filters ({allFilters.size})
               </div>
               <Button 
                 variant="ghost" 
                 size="sm"
-                onClick={() => {
-                  setSelectedFilters({});
-                  setSelectedLocations([]);
-                  setSelectedCompanySizes([]);
-                  setSelectedSalaryRanges([]);
-                }}
-                className="text-xs text-red-600 hover:text-red-700"
+                onClick={clearAllFilters}
+                className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
               >
                 Clear All
               </Button>
             </div>
             <div className="flex flex-wrap gap-1 max-h-20 overflow-y-auto">
-              {Object.entries(selectedFilters).flatMap(([category, items]) =>
-                items.map(item => (
-                  <Badge key={`${category}-${item}`} variant="secondary" className="text-xs">
-                    {item}
-                    <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => 
-                      handleFilterToggle(category, item)
-                    } />
-                  </Badge>
-                ))
-              )}
-              {selectedLocations.map(location => (
-                <Badge key={location} variant="secondary" className="text-xs">
-                  {location}
-                  <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => 
-                    setSelectedLocations(prev => prev.filter(l => l !== location))
-                  } />
-                </Badge>
-              ))}
-              {selectedCompanySizes.map(size => (
-                <Badge key={size} variant="secondary" className="text-xs">
-                  {size}
-                  <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => 
-                    setSelectedCompanySizes(prev => prev.filter(s => s !== size))
-                  } />
-                </Badge>
-              ))}
-              {selectedSalaryRanges.map(range => (
-                <Badge key={range} variant="secondary" className="text-xs">
-                  {range}
-                  <X className="h-3 w-3 ml-1 cursor-pointer" onClick={() => 
-                    setSelectedSalaryRanges(prev => prev.filter(r => r !== range))
-                  } />
+              {Array.from(allFilters.entries()).map(([filterName, [category, item]]) => (
+                <Badge 
+                  key={filterName} 
+                  variant="secondary" 
+                  className="text-xs bg-naukri-blue-100 text-naukri-blue-800 border-naukri-blue-200"
+                >
+                  {item}
+                  <X 
+                    className="h-3 w-3 ml-1 cursor-pointer hover:text-red-500" 
+                    onClick={() => removeFilter(category, item)}
+                  />
                 </Badge>
               ))}
             </div>
@@ -213,14 +259,14 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
         {/* Dynamic Filter Categories */}
         {Object.entries(filterCategories).map(([categoryName, category]) => {
           const Icon = category.icon;
-          const sectionKey = categoryName.toLowerCase().replace(' ', '');
+          const sectionKey = categoryName.toLowerCase().replace(/\s+/g, '');
           
           return (
-            <Card key={categoryName} className="border-slate-100">
+            <Card key={categoryName} className="border-naukri-blue-100 hover:shadow-md transition-shadow">
               <CardHeader className="pb-2 pt-3">
                 <CardTitle className="text-sm font-medium flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Icon className="h-4 w-4 text-slate-600" />
+                    <Icon className="h-4 w-4 text-naukri-primary" />
                     {categoryName}
                   </div>
                   <Button
@@ -230,6 +276,7 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
                       ...prev,
                       [sectionKey]: !prev[sectionKey as keyof typeof expandedSections]
                     }))}
+                    className="hover:bg-naukri-blue-50"
                   >
                     {expandedSections[sectionKey as keyof typeof expandedSections] ? 
                       <ChevronUp className="h-4 w-4" /> : 
@@ -243,7 +290,6 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
                   {Object.entries(category.groups).map(([groupName, group]) => {
                     const selectedItems = selectedFilters[categoryName] || [];
                     const allSelected = group.items.every(item => selectedItems.includes(item));
-                    const someSelected = group.items.some(item => selectedItems.includes(item));
                     
                     return (
                       <div key={groupName} className="space-y-2">
@@ -255,7 +301,7 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
                             />
                             <label className="text-sm font-medium text-slate-700">{groupName}</label>
                           </div>
-                          <span className="text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                          <span className="text-xs text-slate-500 bg-naukri-blue-50 px-2 py-1 rounded">
                             {group.count}
                           </span>
                         </div>
@@ -270,12 +316,59 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
 
         <Separator className="my-2" />
 
-        {/* Company Size */}
-        <Card className="border-slate-100">
+        {/* Education */}
+        <Card className="border-naukri-blue-100 hover:shadow-md transition-shadow">
           <CardHeader className="pb-2 pt-3">
             <CardTitle className="text-sm font-medium flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Briefcase className="h-4 w-4 text-slate-600" />
+                <GraduationCap className="h-4 w-4 text-naukri-primary" />
+                Education
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setExpandedSections(prev => ({
+                  ...prev,
+                  education: !prev.education
+                }))}
+                className="hover:bg-naukri-blue-50"
+              >
+                {expandedSections.education ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          {expandedSections.education && (
+            <CardContent className="pt-0 space-y-2">
+              {educationFilters.map(education => (
+                <div key={education.name} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      checked={selectedEducation.includes(education.name)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSelectedEducation(prev => [...prev, education.name]);
+                        } else {
+                          setSelectedEducation(prev => prev.filter(e => e !== education.name));
+                        }
+                      }}
+                    />
+                    <label className="text-sm text-slate-700">{education.name}</label>
+                  </div>
+                  <span className="text-xs text-slate-500 bg-naukri-blue-50 px-2 py-1 rounded">
+                    {education.count}
+                  </span>
+                </div>
+              ))}
+            </CardContent>
+          )}
+        </Card>
+
+        {/* Company Size */}
+        <Card className="border-naukri-blue-100 hover:shadow-md transition-shadow">
+          <CardHeader className="pb-2 pt-3">
+            <CardTitle className="text-sm font-medium flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Briefcase className="h-4 w-4 text-naukri-primary" />
                 Company Size
               </div>
               <Button
@@ -285,6 +378,7 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
                   ...prev,
                   companySize: !prev.companySize
                 }))}
+                className="hover:bg-naukri-blue-50"
               >
                 {expandedSections.companySize ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </Button>
@@ -307,7 +401,7 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
                     />
                     <label className="text-sm text-slate-700">{size.name}</label>
                   </div>
-                  <span className="text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                  <span className="text-xs text-slate-500 bg-naukri-blue-50 px-2 py-1 rounded">
                     {size.count}
                   </span>
                 </div>
@@ -317,11 +411,11 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
         </Card>
 
         {/* Locations */}
-        <Card className="border-slate-100">
+        <Card className="border-naukri-blue-100 hover:shadow-md transition-shadow">
           <CardHeader className="pb-2 pt-3">
             <CardTitle className="text-sm font-medium flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-slate-600" />
+                <MapPin className="h-4 w-4 text-naukri-primary" />
                 Location
               </div>
               <Button
@@ -331,6 +425,7 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
                   ...prev,
                   location: !prev.location
                 }))}
+                className="hover:bg-naukri-blue-50"
               >
                 {expandedSections.location ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </Button>
@@ -353,7 +448,7 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
                     />
                     <label className="text-sm text-slate-700">{location}</label>
                   </div>
-                  <span className="text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                  <span className="text-xs text-slate-500 bg-naukri-blue-50 px-2 py-1 rounded">
                     {[145, 230, 180, 95, 120, 85, 65][index]}
                   </span>
                 </div>
@@ -363,11 +458,11 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
         </Card>
 
         {/* Salary Range */}
-        <Card className="border-slate-100">
+        <Card className="border-naukri-blue-100 hover:shadow-md transition-shadow">
           <CardHeader className="pb-2 pt-3">
             <CardTitle className="text-sm font-medium flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4 text-slate-600" />
+                <DollarSign className="h-4 w-4 text-naukri-primary" />
                 Salary Range
               </div>
               <Button
@@ -377,6 +472,7 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
                   ...prev,
                   salary: !prev.salary
                 }))}
+                className="hover:bg-naukri-blue-50"
               >
                 {expandedSections.salary ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </Button>
@@ -399,7 +495,7 @@ export const EnhancedFilterSidebar = ({ isOpen }: EnhancedFilterSidebarProps) =>
                     />
                     <label className="text-sm text-slate-700">{salary.range}</label>
                   </div>
-                  <span className="text-xs text-slate-500 bg-slate-50 px-2 py-1 rounded">
+                  <span className="text-xs text-slate-500 bg-naukri-blue-50 px-2 py-1 rounded">
                     {salary.count}
                   </span>
                 </div>
