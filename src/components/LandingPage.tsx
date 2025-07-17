@@ -71,6 +71,9 @@ export const LandingPage = ({ onSearch, onViewCandidateHub }: LandingPageProps) 
             </p>
           </div>
 
+          {/* Live Talent Stats - Moved to top for maximum attention */}
+          <LiveTalentStats />
+
           {/* Search Section */}
           <div className="max-w-5xl mx-auto mb-8">
             <Tabs defaultValue="jd" className="w-full">
@@ -136,10 +139,7 @@ export const LandingPage = ({ onSearch, onViewCandidateHub }: LandingPageProps) 
             </Tabs>
           </div>
 
-          {/* Live Talent Stats */}
-          <LiveTalentStats />
-
-          {/* Saved Candidates & Past Searches */}
+          {/* Saved Candidates & Past Searches - Grouped together */}
           <div className="text-center mb-12">
             <Button
               onClick={onViewCandidateHub}

@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Search, Calendar, Users, BarChart3, Star, Filter, ChevronRight } from "lucide-react";
+import { Search, Calendar, BarChart3, Filter, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,27 +33,30 @@ export const RecentSearches = ({
       title: "Senior Product Manager - B2C",
       date: "2024-01-15",
       candidatesFound: 142,
-      shortlisted: 8,
+      shortlisted: 0,
       type: "jd-search",
-      status: "active"
+      status: "active",
+      query: "Senior Product Manager - B2C"
     },
     {
       id: "2", 
       title: "Data Scientist • ML Engineer",
       date: "2024-01-14",
       candidatesFound: 89,
-      shortlisted: 12,
+      shortlisted: 0,
       type: "skill-search",
-      status: "completed"
+      status: "completed",
+      query: "Data Scientist • ML Engineer"
     },
     {
       id: "3",
       title: "Frontend Developer • React • 3-5 years",
       date: "2024-01-12",
       candidatesFound: 234,
-      shortlisted: 15,
+      shortlisted: 0,
       type: "skill-search", 
-      status: "active"
+      status: "active",
+      query: "Frontend Developer • React • 3-5 years"
     }
   ];
 
@@ -63,28 +66,16 @@ export const RecentSearches = ({
       title: "VP Engineering - SaaS Startup",
       date: "2024-01-10",
       candidatesFound: 67,
-      shortlisted: 5,
+      shortlisted: 0,
       type: "jd-search",
-      status: "bookmarked"
-    }
-  ];
-
-  const shortlists = [
-    {
-      id: "5",
-      title: "Product Manager Shortlist",
-      date: "2024-01-15",
-      candidatesFound: 0,
-      shortlisted: 8,
-      type: "shortlist",
-      status: "active"
+      status: "bookmarked",
+      query: "VP Engineering - SaaS Startup"
     }
   ];
 
   const sortOptions = [
     { value: "recent", label: "Most Recent" },
     { value: "candidates", label: "Most Candidates" },
-    { value: "shortlisted", label: "Most Shortlisted" },
     { value: "alphabetical", label: "Alphabetical" }
   ];
 
@@ -102,12 +93,6 @@ export const RecentSearches = ({
     }
   };
 
-  const handleViewCandidates = (searchId: string) => {
-    if (onViewCandidates) {
-      onViewCandidates(searchId);
-    }
-  };
-
   const renderSearchCard = (search: any) => (
     <Card key={search.id} className="border-slate-200 hover:border-primary/50 transition-colors cursor-pointer group">
       <CardContent className="p-4">
@@ -117,9 +102,6 @@ export const RecentSearches = ({
               <h3 className="font-semibold text-slate-900 group-hover:text-primary transition-colors">
                 {search.title}
               </h3>
-              {search.status === 'bookmarked' && (
-                <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-              )}
             </div>
             
             <div className="flex items-center gap-4 text-sm text-slate-600 mb-3">
@@ -129,14 +111,9 @@ export const RecentSearches = ({
               </div>
               {search.candidatesFound > 0 && (
                 <div className="flex items-center gap-1">
-                  <Users className="h-4 w-4" />
-                  {search.candidatesFound} candidates
+                  <span>{search.candidatesFound} candidates found</span>
                 </div>
               )}
-              <div className="flex items-center gap-1">
-                <Star className="h-4 w-4" />
-                {search.shortlisted} shortlisted
-              </div>
             </div>
 
             <div className="flex gap-2">
@@ -149,18 +126,6 @@ export const RecentSearches = ({
                 <BarChart3 className="h-4 w-4 mr-1" />
                 View Insights
               </Button>
-              {search.shortlisted > 0 && (
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => handleViewCandidates(search.id)}
-                  className="text-slate-600 hover:text-primary"
-                >
-                  <Users className="h-4 w-4 mr-1" />
-                  View Candidates
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              )}
             </div>
           </div>
         </div>
@@ -213,52 +178,16 @@ export const RecentSearches = ({
           )}
         </div>
       ) : (
-        <Tabs defaultValue="recent" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="recent">Recent Searches</TabsTrigger>
-            <TabsTrigger value="shortlists">Shortlists</TabsTrigger>
-            <TabsTrigger value="bookmarked">Bookmarked</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="recent" className="space-y-4 mt-6">
-            <div className="grid gap-4">
-              {filterSearches(recentSearches).map(renderSearchCard)}
-              {filterSearches(recentSearches).length === 0 && (
-                <Card className="border-slate-200">
-                  <CardContent className="text-center py-8">
-                    <p className="text-slate-500">No recent searches found.</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="shortlists" className="space-y-4 mt-6">
-            <div className="grid gap-4">
-              {filterSearches(shortlists).map(renderSearchCard)}
-              {filterSearches(shortlists).length === 0 && (
-                <Card className="border-slate-200">
-                  <CardContent className="text-center py-8">
-                    <p className="text-slate-500">No shortlists created yet.</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="bookmarked" className="space-y-4 mt-6">
-            <div className="grid gap-4">
-              {filterSearches(bookmarkedSearches).map(renderSearchCard)}
-              {filterSearches(bookmarkedSearches).length === 0 && (
-                <Card className="border-slate-200">
-                  <CardContent className="text-center py-8">
-                    <p className="text-slate-500">No bookmarked searches yet.</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
+        <div className="grid gap-4">
+          {filterSearches(recentSearches).map(renderSearchCard)}
+          {filterSearches(recentSearches).length === 0 && (
+            <Card className="border-slate-200">
+              <CardContent className="text-center py-8">
+                <p className="text-slate-500">No recent searches found.</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       )}
     </div>
   );

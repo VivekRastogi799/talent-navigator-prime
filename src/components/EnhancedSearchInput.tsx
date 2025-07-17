@@ -130,7 +130,7 @@ export const EnhancedSearchInput = ({ onSearch, placeholder = "Enter designation
 
   return (
     <div className="w-full space-y-4">
-      {/* Boolean Toggle */}
+      {/* Boolean Toggle - Simplified */}
       <div className="flex items-center justify-end">
         <div className="flex items-center gap-2">
           <span className="text-sm text-slate-600">Boolean</span>
@@ -138,9 +138,6 @@ export const EnhancedSearchInput = ({ onSearch, placeholder = "Enter designation
             checked={!booleanOff} 
             onCheckedChange={(checked) => setBooleanOff(!checked)}
           />
-          <span className="text-xs text-slate-500">
-            {booleanOff ? 'AND' : 'OR'}
-          </span>
         </div>
       </div>
 

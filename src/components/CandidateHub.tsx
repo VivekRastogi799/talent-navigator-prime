@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { RecentSearches } from "./candidate/RecentSearches";
 import { ShortlistManager } from "./candidate/ShortlistManager";
 import { CandidateComparison } from "./candidate/CandidateComparison";
@@ -49,6 +48,11 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
   const handleCompareSelected = (candidateIds: string[]) => {
     setSelectedForComparison(candidateIds);
     setComparisonOpen(true);
+  };
+
+  const handleViewInsights = (query: string) => {
+    // Navigate to insights view - this would typically trigger the main search flow
+    onStartNewSearch();
   };
 
   const mockComparisonCandidates = [
@@ -198,6 +202,7 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
             <ShortlistManager 
               onViewProfile={onViewProfile}
               onCompareSelected={handleCompareSelected}
+              onViewInsights={handleViewInsights}
             />
           ) : (
             <div className="text-center py-12 text-slate-500">
@@ -298,6 +303,7 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
             <ShortlistManager 
               onViewProfile={onViewProfile}
               onCompareSelected={handleCompareSelected}
+              onViewInsights={handleViewInsights}
             />
           </TabsContent>
 
