@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Search, Calendar, BarChart3, ChevronRight, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";

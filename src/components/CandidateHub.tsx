@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Search, Star, Clock, Users, TrendingUp, ArrowLeft, Eye, BarChart3, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { RecentSearches } from "./candidate/RecentSearches";
 import { ShortlistManager } from "./candidate/ShortlistManager";
 import { CandidateComparison } from "./candidate/CandidateComparison";
+import { CandidateProfile } from "./candidate/CandidateProfile";
 
 interface CandidateHubProps {
   onStartNewSearch: () => void;
@@ -28,12 +28,14 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
   const [selectedForComparison, setSelectedForComparison] = useState<string[]>([]);
   const [selectedSearch, setSelectedSearch] = useState<any>(null);
   const [viewMode, setViewMode] = useState<'candidates' | 'insights'>('candidates');
+  const [showProfile, setShowProfile] = useState(false);
+  const [selectedCandidateId, setSelectedCandidateId] = useState<string>("");
 
-  // Mock summary data
+  // Mock summary data - updated shortlists to 22%
   const searchSummary: SavedSearchSummary = {
     totalSearches: 24,
     profilesUnlocked: 156,
-    shortlists: 8,
+    shortlists: 22, // Changed from 8 to represent 22%
     avgMatchScore: 86
   };
 
@@ -43,6 +45,7 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
 
   const handleBackToSearches = () => {
     setSelectedSearch(null);
+    setShowProfile(false);
   };
 
   const handleCompareSelected = (candidateIds: string[]) => {
@@ -51,9 +54,34 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
   };
 
   const handleViewInsights = (query: string) => {
-    // Navigate to insights view - this would typically trigger the main search flow
-    onStartNewSearch();
+    // Instead of redirecting to search, show insights for the specific query
+    const mockSearch = {
+      id: "insight-" + Date.now(),
+      query: query,
+      title: query,
+      date: new Date().toISOString().split('T')[0],
+      candidatesFound: 142,
+      shortlisted: 12,
+      type: "insight-view"
+    };
+    setSelectedSearch(mockSearch);
+    setViewMode('insights');
   };
+
+  const handleViewProfile = (candidateId: string) => {
+    setSelectedCandidateId(candidateId);
+    setShowProfile(true);
+  };
+
+  // Show candidate profile if selected
+  if (showProfile) {
+    return (
+      <CandidateProfile
+        candidateId={selectedCandidateId}
+        onBack={handleBackToSearches}
+      />
+    );
+  }
 
   const mockComparisonCandidates = [
     {
@@ -146,7 +174,7 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
         </header>
 
         <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
-          {/* Summary Widgets */}
+          {/* Summary Widgets - Updated shortlists label */}
           <div className="grid grid-cols-4 gap-4">
             <Card className="glass-card premium-shadow border-slate-200">
               <div className="flex items-center gap-3 p-4">
@@ -178,7 +206,7 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
                   <Star className="h-5 w-5 text-yellow-600" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-slate-800">{searchSummary.shortlists}</p>
+                  <p className="text-2xl font-bold text-slate-800">{searchSummary.shortlists}%</p>
                   <p className="text-sm text-slate-600">Shortlists</p>
                 </div>
               </div>
@@ -200,13 +228,13 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
           {/* Content based on view mode */}
           {viewMode === 'candidates' ? (
             <ShortlistManager 
-              onViewProfile={onViewProfile}
+              onViewProfile={handleViewProfile}
               onCompareSelected={handleCompareSelected}
             />
           ) : (
             <div className="text-center py-12 text-slate-500">
               <BarChart3 className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-              <p className="text-lg">Insights View</p>
+              <p className="text-lg">Insights View for: {selectedSearch.query}</p>
               <p>Detailed analytics and insights for this search</p>
             </div>
           )}
@@ -217,7 +245,7 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
           isOpen={comparisonOpen}
           onClose={() => setComparisonOpen(false)}
           candidates={mockComparisonCandidates.filter(c => selectedForComparison.includes(c.id))}
-          onViewProfile={onViewProfile}
+          onViewProfile={handleViewProfile}
           onShortlist={(id) => console.log('Shortlist', id)}
         />
       </div>
@@ -307,7 +335,7 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
 
                 <TabsContent value="shortlist" className="mt-0">
                   <ShortlistManager 
-                    onViewProfile={onViewProfile}
+                    onViewProfile={handleViewProfile}
                     onCompareSelected={handleCompareSelected}
                   />
                 </TabsContent>
