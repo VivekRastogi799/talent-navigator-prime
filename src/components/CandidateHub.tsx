@@ -1,8 +1,11 @@
+
 import { useState } from "react";
-import { Search, Star, Clock, Users, TrendingUp } from "lucide-react";
+import { Search, Star, Clock, Users, TrendingUp, ArrowLeft, Eye, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { RecentSearches } from "./candidate/RecentSearches";
 import { ShortlistManager } from "./candidate/ShortlistManager";
 import { CandidateComparison } from "./candidate/CandidateComparison";
@@ -12,26 +15,35 @@ interface CandidateHubProps {
   onViewProfile: (candidateId: string) => void;
 }
 
-const quickStats = [
-  { label: "Total Searches", value: "24", icon: Search, color: "naukri-primary" },
-  { label: "Shortlisted", value: "8", icon: Star, color: "amber" },
-  { label: "Profiles Viewed", value: "45", icon: Users, color: "green" },
-  { label: "Success Rate", value: "68%", icon: TrendingUp, color: "violet" }
-];
+interface SavedSearchSummary {
+  totalSearches: number;
+  profilesUnlocked: number;
+  shortlists: number;
+  successRate: number;
+}
 
 export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubProps) => {
   const [activeTab, setActiveTab] = useState("recent");
+  const [searchTerm, setSearchTerm] = useState("");
   const [comparisonOpen, setComparisonOpen] = useState(false);
   const [selectedForComparison, setSelectedForComparison] = useState<string[]>([]);
+  const [selectedSearch, setSelectedSearch] = useState<any>(null);
+  const [viewMode, setViewMode] = useState<'candidates' | 'insights'>('candidates');
 
-  const handleSearchSelect = (search: any) => {
-    // Navigate to search results with the selected search parameters
-    console.log('Selected search:', search);
-    onStartNewSearch();
+  // Mock summary data
+  const searchSummary: SavedSearchSummary = {
+    totalSearches: 24,
+    profilesUnlocked: 156,
+    shortlists: 8,
+    successRate: 68
   };
 
-  const handleViewBookmarks = () => {
-    setActiveTab("bookmarks");
+  const handleSearchSelect = (search: any) => {
+    setSelectedSearch(search);
+  };
+
+  const handleBackToSearches = () => {
+    setSelectedSearch(null);
   };
 
   const handleCompareSelected = (candidateIds: string[]) => {
@@ -86,21 +98,141 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
     }
   ];
 
+  // If a search is selected, show the detailed view
+  if (selectedSearch) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-slate-100">
+        {/* Header */}
+        <header className="bg-white border-b border-slate-200 shadow-sm">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                onClick={handleBackToSearches}
+                className="text-slate-600 hover:text-primary"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Searches
+              </Button>
+              <div className="text-2xl font-bold gradient-text">TopTier</div>
+              <span className="text-slate-400">•</span>
+              <h1 className="text-xl font-bold text-slate-800">{selectedSearch.query}</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant={viewMode === 'candidates' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('candidates')}
+                className={viewMode === 'candidates' ? 'bg-primary' : ''}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                Candidate View
+              </Button>
+              <Button
+                variant={viewMode === 'insights' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('insights')}
+                className={viewMode === 'insights' ? 'bg-primary' : ''}
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Insights View
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+          {/* Summary Widgets */}
+          <div className="grid grid-cols-4 gap-4">
+            <Card className="glass-card premium-shadow border-slate-200">
+              <div className="flex items-center gap-3 p-4">
+                <div className="p-2 rounded-lg bg-blue-100">
+                  <Search className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-slate-800">{searchSummary.totalSearches}</p>
+                  <p className="text-sm text-slate-600">Total Searches</p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="glass-card premium-shadow border-slate-200">
+              <div className="flex items-center gap-3 p-4">
+                <div className="p-2 rounded-lg bg-green-100">
+                  <Users className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-slate-800">{searchSummary.profilesUnlocked}</p>
+                  <p className="text-sm text-slate-600">Profiles Unlocked</p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="glass-card premium-shadow border-slate-200">
+              <div className="flex items-center gap-3 p-4">
+                <div className="p-2 rounded-lg bg-yellow-100">
+                  <Star className="h-5 w-5 text-yellow-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-slate-800">{searchSummary.shortlists}</p>
+                  <p className="text-sm text-slate-600">Shortlists</p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="glass-card premium-shadow border-slate-200">
+              <div className="flex items-center gap-3 p-4">
+                <div className="p-2 rounded-lg bg-purple-100">
+                  <TrendingUp className="h-5 w-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-slate-800">{searchSummary.successRate}%</p>
+                  <p className="text-sm text-slate-600">Success Rate</p>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Content based on view mode */}
+          {viewMode === 'candidates' ? (
+            <ShortlistManager 
+              onViewProfile={onViewProfile}
+              onCompareSelected={handleCompareSelected}
+            />
+          ) : (
+            <div className="text-center py-12 text-slate-500">
+              <BarChart3 className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+              <p className="text-lg">Insights View</p>
+              <p>Detailed analytics and insights for this search</p>
+            </div>
+          )}
+        </div>
+
+        {/* Comparison Modal */}
+        <CandidateComparison
+          isOpen={comparisonOpen}
+          onClose={() => setComparisonOpen(false)}
+          candidates={mockComparisonCandidates.filter(c => selectedForComparison.includes(c.id))}
+          onViewProfile={onViewProfile}
+          onShortlist={(id) => console.log('Shortlist', id)}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-naukri-blue-50 to-naukri-blue-100">
+    <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-slate-100">
       {/* Header Navigation */}
-      <header className="bg-white border-b border-naukri-blue-200 shadow-sm">
+      <header className="bg-white border-b border-slate-200 shadow-sm">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-4">
-            <div className="text-2xl font-bold gradient-text">
-              TopTier
-            </div>
+            <div className="text-2xl font-bold gradient-text">TopTier</div>
             <span className="text-slate-400">•</span>
             <h1 className="text-xl font-bold text-slate-800">Saved Candidates & Past Searches</h1>
           </div>
           <Button 
             onClick={onStartNewSearch} 
-            className="bg-naukri-primary hover:bg-naukri-primary-dark shadow-lg hover:shadow-xl transition-all duration-300"
+            className="bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300"
           >
             <Search className="h-4 w-4 mr-2" />
             New Search
@@ -115,43 +247,39 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
           <p className="text-slate-600">Manage searches, build shortlists, and evaluate premium talent</p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-4 gap-4">
-          {quickStats.map((stat) => (
-            <Card key={stat.label} className="glass-card premium-shadow border-naukri-blue-100">
-              <div className="flex items-center gap-3 p-4">
-                <div className={`p-2 rounded-lg ${stat.color === 'naukri-primary' ? 'bg-naukri-blue-100' : `bg-${stat.color}-100`}`}>
-                  <stat.icon className={`h-5 w-5 ${stat.color === 'naukri-primary' ? 'text-naukri-primary' : `text-${stat.color}-600`}`} />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-slate-800">{stat.value}</p>
-                  <p className="text-sm text-slate-600">{stat.label}</p>
-                </div>
-              </div>
-            </Card>
-          ))}
+        {/* Search Bar */}
+        <div className="max-w-md mx-auto mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+            <Input
+              placeholder="Search by keyword or role..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 border-slate-200 focus:border-primary"
+            />
+          </div>
         </div>
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 bg-white/80 backdrop-blur-sm border border-naukri-blue-200">
+          <TabsList className="grid w-full grid-cols-3 bg-white/80 backdrop-blur-sm border border-slate-200">
             <TabsTrigger 
               value="recent" 
-              className="flex items-center gap-2 data-[state=active]:bg-naukri-primary data-[state=active]:text-white"
+              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white"
             >
               <Clock className="h-4 w-4" />
               Recent Searches
             </TabsTrigger>
             <TabsTrigger 
               value="shortlist" 
-              className="flex items-center gap-2 data-[state=active]:bg-naukri-primary data-[state=active]:text-white"
+              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white"
             >
               <Star className="h-4 w-4" />
-              Shortlisted
+              Shortlists
             </TabsTrigger>
             <TabsTrigger 
               value="bookmarks" 
-              className="flex items-center gap-2 data-[state=active]:bg-naukri-primary data-[state=active]:text-white"
+              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white"
             >
               <Search className="h-4 w-4" />
               Bookmarked Searches
@@ -161,7 +289,8 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
           <TabsContent value="recent" className="mt-6">
             <RecentSearches 
               onSearchSelect={handleSearchSelect}
-              onViewBookmarks={handleViewBookmarks}
+              onViewBookmarks={() => setActiveTab("bookmarks")}
+              searchTerm={searchTerm}
             />
           </TabsContent>
 
@@ -176,18 +305,11 @@ export const CandidateHub = ({ onStartNewSearch, onViewProfile }: CandidateHubPr
             <RecentSearches 
               onSearchSelect={handleSearchSelect}
               onViewBookmarks={() => {}}
+              searchTerm={searchTerm}
+              showBookmarkedOnly={true}
             />
           </TabsContent>
         </Tabs>
-
-        {/* Comparison Modal */}
-        <CandidateComparison
-          isOpen={comparisonOpen}
-          onClose={() => setComparisonOpen(false)}
-          candidates={mockComparisonCandidates.filter(c => selectedForComparison.includes(c.id))}
-          onViewProfile={onViewProfile}
-          onShortlist={(id) => console.log('Shortlist', id)}
-        />
       </div>
     </div>
   );

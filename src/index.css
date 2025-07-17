@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -18,7 +17,7 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 206 100% 31%;
+    --primary: 229 100% 62%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -35,7 +34,7 @@ All colors MUST be HSL.
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 206 100% 31%;
+    --ring: 229 100% 62%;
 
     --radius: 0.5rem;
 
@@ -48,24 +47,24 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Naukri brand colors */
-    --naukri-primary: 206 100% 31%; /* #0058A0 */
-    --naukri-primary-light: 206 100% 35%;
-    --naukri-primary-dark: 206 100% 27%;
+    /* Updated Naukri brand colors with new primary */
+    --naukri-primary: 229 100% 62%; /* #265DF5 */
+    --naukri-primary-light: 229 100% 67%;
+    --naukri-primary-dark: 229 100% 57%;
     --naukri-secondary: 210 40% 96.1%;
-    --naukri-accent: 206 100% 95%;
-    --naukri-gradient-start: 206 100% 31%;
-    --naukri-gradient-end: 206 100% 35%;
-    --naukri-blue-50: 206 100% 97%;
-    --naukri-blue-100: 206 100% 93%;
-    --naukri-blue-200: 206 100% 86%;
-    --naukri-blue-300: 206 100% 75%;
-    --naukri-blue-400: 206 100% 65%;
-    --naukri-blue-500: 206 100% 31%;
-    --naukri-blue-600: 206 100% 27%;
-    --naukri-blue-700: 206 100% 23%;
-    --naukri-blue-800: 206 100% 19%;
-    --naukri-blue-900: 206 100% 15%;
+    --naukri-accent: 229 100% 95%;
+    --naukri-gradient-start: 229 100% 62%;
+    --naukri-gradient-end: 229 100% 67%;
+    --naukri-blue-50: 229 100% 97%;
+    --naukri-blue-100: 229 100% 93%;
+    --naukri-blue-200: 229 100% 86%;
+    --naukri-blue-300: 229 100% 75%;
+    --naukri-blue-400: 229 100% 65%;
+    --naukri-blue-500: 229 100% 62%;
+    --naukri-blue-600: 229 100% 57%;
+    --naukri-blue-700: 229 100% 52%;
+    --naukri-blue-800: 229 100% 47%;
+    --naukri-blue-900: 229 100% 42%;
   }
 
   .dark {
@@ -78,7 +77,7 @@ All colors MUST be HSL.
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 206 100% 31%;
+    --primary: 229 100% 62%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -95,10 +94,10 @@ All colors MUST be HSL.
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 206 100% 31%;
+    --ring: 229 100% 62%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 206 100% 31%;
+    --sidebar-primary: 229 100% 62%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;

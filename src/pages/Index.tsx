@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Download, BookmarkPlus, Settings, User, Menu, X, Users } from "lucide-react";
+import { Bookmark, Settings, User, Menu, X, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EnhancedFilterSidebar } from "@/components/EnhancedFilterSidebar";
 import { DashboardWidgets } from "@/components/DashboardWidgets";
@@ -31,6 +31,11 @@ const Index = () => {
     setDrilldownOpen(true);
   };
 
+  const handleBookmarkSearch = () => {
+    // Logic to save current search
+    console.log('Bookmarking search...');
+  };
+
   if (showCandidateHub) {
     return (
       <CandidateHub 
@@ -53,9 +58,9 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Top Header */}
-      <header className="bg-white border-b border-naukri-blue-200 shadow-sm">
+    <div className="min-h-screen bg-slate-50">
+      {/* Fixed Top Header */}
+      <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
         <div className="flex items-center justify-between px-6 py-4">
           {/* Left section */}
           <div className="flex items-center gap-4">
@@ -63,7 +68,7 @@ const Index = () => {
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-slate-600 hover:text-naukri-primary hover:bg-naukri-blue-50"
+              className="text-slate-600 hover:text-primary hover:bg-primary/10"
             >
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
@@ -84,37 +89,32 @@ const Index = () => {
               variant="outline" 
               size="sm" 
               onClick={() => setShowCandidateHub(true)}
-              className="text-naukri-blue-600 border-naukri-blue-200 hover:border-naukri-primary hover:text-naukri-primary hover:bg-naukri-blue-50"
+              className="text-slate-600 border-slate-200 hover:border-primary hover:text-primary hover:bg-primary/10"
             >
               <Users className="h-4 w-4 mr-2" />
-              Saved Candidates
+              Saved Candidates & Past Searches
             </Button>
             <Button 
               variant="outline" 
               size="sm" 
-              className="text-naukri-blue-600 border-naukri-blue-200 hover:border-naukri-primary hover:text-naukri-primary hover:bg-naukri-blue-50"
+              onClick={handleBookmarkSearch}
+              className="text-slate-600 border-slate-200 hover:border-primary hover:text-primary hover:bg-primary/10"
+              title="Save this search report for later"
             >
-              <BookmarkPlus className="h-4 w-4 mr-2" />
-              Saved Reports
-            </Button>
-            <Button 
-              size="sm" 
-              className="bg-naukri-primary hover:bg-naukri-primary-dark shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export
+              <Bookmark className="h-4 w-4 mr-2" />
+              Save Report
             </Button>
             <Button 
               variant="ghost" 
               size="sm" 
-              className="text-slate-600 hover:text-naukri-primary hover:bg-naukri-blue-50"
+              className="text-slate-600 hover:text-primary hover:bg-primary/10"
             >
               <Settings className="h-4 w-4" />
             </Button>
             <Button 
               variant="ghost" 
               size="sm" 
-              className="text-slate-600 hover:text-naukri-primary hover:bg-naukri-blue-50"
+              className="text-slate-600 hover:text-primary hover:bg-primary/10"
             >
               <User className="h-4 w-4" />
             </Button>
@@ -122,18 +122,24 @@ const Index = () => {
         </div>
       </header>
 
-      <div className="flex min-h-[calc(100vh-80px)]">
+      <div className="flex">
         {/* Sidebar */}
         <EnhancedFilterSidebar isOpen={sidebarOpen} />
         
         {/* Main Content */}
-        <main className={`flex-1 p-6 transition-all duration-300 ${sidebarOpen ? 'ml-80' : 'ml-0'} ${drilldownOpen ? 'mr-96' : 'mr-0'}`}>
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">Premium Talent Insights</h1>
-            <p className="text-slate-600">Product Manager • Bangalore • 8-15 LPA</p>
+        <main className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-80' : 'ml-0'} ${drilldownOpen ? 'mr-96' : 'mr-0'}`}>
+          {/* Page Header Section */}
+          <div className="bg-white border-b border-slate-200">
+            <div className="px-6 py-6">
+              <div className="max-w-4xl">
+                <h1 className="text-3xl font-bold text-slate-800 mb-2">Premium Talent Insights</h1>
+                <p className="text-slate-600">Product Manager • Bangalore • 8-15 LPA</p>
+              </div>
+            </div>
           </div>
           
-          <div className="space-y-6">
+          {/* Content Area */}
+          <div className="p-6 space-y-6">
             <DashboardWidgets onDrilldown={handleWidgetDrilldown} />
             
             {/* Custom Report Footer */}

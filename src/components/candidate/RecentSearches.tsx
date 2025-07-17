@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from "react";
-import { Clock, Search, Bookmark, Users, X, ChevronRight } from "lucide-react";
+import { Clock, Search, Bookmark, Users, X, ChevronRight, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,11 +17,15 @@ interface SearchItem {
   resultCount: number;
   timestamp: Date;
   bookmarked: boolean;
+  status: 'completed' | 'in-progress' | 'failed';
+  shortlistedCount: number;
 }
 
 interface RecentSearchesProps {
   onSearchSelect: (search: SearchItem) => void;
   onViewBookmarks: () => void;
+  searchTerm?: string;
+  showBookmarkedOnly?: boolean;
 }
 
 const mockRecentSearches: SearchItem[] = [
@@ -34,8 +39,10 @@ const mockRecentSearches: SearchItem[] = [
       company: ["FAANG", "Unicorn"]
     },
     resultCount: 156,
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-    bookmarked: true
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    bookmarked: true,
+    status: 'completed',
+    shortlistedCount: 8
   },
   {
     id: "2", 
@@ -46,8 +53,10 @@ const mockRecentSearches: SearchItem[] = [
       skills: ["React", "TypeScript", "Next.js"]
     },
     resultCount: 243,
-    timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
-    bookmarked: false
+    timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000),
+    bookmarked: false,
+    status: 'completed',
+    shortlistedCount: 12
   },
   {
     id: "3",
@@ -59,12 +68,28 @@ const mockRecentSearches: SearchItem[] = [
       company: ["Startup", "Unicorn"]
     },
     resultCount: 89,
-    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-    bookmarked: true
+    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
+    bookmarked: true,
+    status: 'completed',
+    shortlistedCount: 5
+  },
+  {
+    id: "4",
+    query: "DevOps Engineer",
+    filters: {
+      location: ["Remote", "Bangalore"],
+      experience: "4-8 years",
+      skills: ["AWS", "Kubernetes", "Docker"]
+    },
+    resultCount: 67,
+    timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000),
+    bookmarked: false,
+    status: 'in-progress',
+    shortlistedCount: 0
   }
 ];
 
-export const RecentSearches = ({ onSearchSelect, onViewBookmarks }: RecentSearchesProps) => {
+export const RecentSearches = ({ onSearchSelect, onViewBookmarks, searchTerm = "", showBookmarkedOnly = false }: RecentSearchesProps) => {
   const [searches, setSearches] = useState<SearchItem[]>(mockRecentSearches);
 
   const toggleBookmark = (searchId: string) => {
@@ -90,6 +115,27 @@ export const RecentSearches = ({ onSearchSelect, onViewBookmarks }: RecentSearch
     return "Just now";
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'in-progress': return 'bg-yellow-100 text-yellow-800';
+      case 'failed': return 'bg-red-100 text-red-800';
+      default: return 'bg-slate-100 text-slate-800';
+    }
+  };
+
+  // Filter searches based on search term and bookmark status
+  const filteredSearches = searches
+    .filter(search => {
+      if (showBookmarkedOnly && !search.bookmarked) return false;
+      if (searchTerm) {
+        return search.query.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               search.filters.skills?.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase())) ||
+               search.filters.location?.some(loc => loc.toLowerCase().includes(searchTerm.toLowerCase()));
+      }
+      return true;
+    });
+
   const bookmarkedCount = searches.filter(s => s.bookmarked).length;
 
   return (
@@ -98,23 +144,28 @@ export const RecentSearches = ({ onSearchSelect, onViewBookmarks }: RecentSearch
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Clock className="h-5 w-5 text-slate-600" />
-          <h3 className="font-semibold text-slate-800">Recent Searches</h3>
+          <h3 className="font-semibold text-slate-800">
+            {showBookmarkedOnly ? 'Bookmarked Searches' : 'Recent Searches'}
+          </h3>
+          <Badge variant="outline">{filteredSearches.length}</Badge>
         </div>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={onViewBookmarks}
-          className="text-blue-600 border-blue-200 hover:bg-blue-50"
-        >
-          <Bookmark className="h-4 w-4 mr-1" />
-          Bookmarked ({bookmarkedCount})
-        </Button>
+        {!showBookmarkedOnly && (
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={onViewBookmarks}
+            className="text-primary border-primary/20 hover:bg-primary/10"
+          >
+            <Bookmark className="h-4 w-4 mr-1" />
+            Bookmarked ({bookmarkedCount})
+          </Button>
+        )}
       </div>
 
       {/* Search List */}
       <div className="space-y-3">
-        {searches.map((search) => (
-          <Card key={search.id} className="p-4 hover:shadow-md transition-shadow cursor-pointer border-slate-200">
+        {filteredSearches.map((search) => (
+          <Card key={search.id} className="p-4 hover:shadow-md transition-shadow cursor-pointer border-slate-200 hover:border-primary/30">
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0" onClick={() => onSearchSelect(search)}>
                 <div className="flex items-center gap-2 mb-2">
@@ -123,6 +174,9 @@ export const RecentSearches = ({ onSearchSelect, onViewBookmarks }: RecentSearch
                   <Badge variant="outline" className="text-green-600 border-green-200">
                     <Users className="h-3 w-3 mr-1" />
                     {search.resultCount}
+                  </Badge>
+                  <Badge className={getStatusColor(search.status)}>
+                    {search.status}
                   </Badge>
                 </div>
                 
@@ -152,7 +206,16 @@ export const RecentSearches = ({ onSearchSelect, onViewBookmarks }: RecentSearch
                 </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-500">{formatTimeAgo(search.timestamp)}</span>
+                  <div className="flex items-center gap-4">
+                    <span className="text-xs text-slate-500 flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {formatTimeAgo(search.timestamp)}
+                    </span>
+                    <span className="text-xs text-slate-500 flex items-center gap-1">
+                      <Star className="h-3 w-3" />
+                      {search.shortlistedCount} shortlisted
+                    </span>
+                  </div>
                   <ChevronRight className="h-4 w-4 text-slate-400" />
                 </div>
               </div>
@@ -168,7 +231,7 @@ export const RecentSearches = ({ onSearchSelect, onViewBookmarks }: RecentSearch
                   }}
                   className="h-8 w-8 p-0"
                 >
-                  <Bookmark className={`h-4 w-4 ${search.bookmarked ? 'fill-blue-600 text-blue-600' : 'text-slate-400'}`} />
+                  <Bookmark className={`h-4 w-4 ${search.bookmarked ? 'fill-primary text-primary' : 'text-slate-400'}`} />
                 </Button>
                 <Button
                   variant="ghost"
@@ -187,10 +250,11 @@ export const RecentSearches = ({ onSearchSelect, onViewBookmarks }: RecentSearch
         ))}
       </div>
 
-      {searches.length === 0 && (
+      {filteredSearches.length === 0 && (
         <div className="text-center py-8 text-slate-500">
           <Search className="h-12 w-12 text-slate-300 mx-auto mb-2" />
-          <p>No recent searches</p>
+          <p>No searches found</p>
+          {searchTerm && <p className="text-sm">Try adjusting your search terms</p>}
         </div>
       )}
     </div>
