@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Download, BookmarkPlus, Settings, User, Menu, X } from "lucide-react";
+import { Download, BookmarkPlus, Settings, User, Menu, X, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EnhancedFilterSidebar } from "@/components/EnhancedFilterSidebar";
 import { DashboardWidgets } from "@/components/DashboardWidgets";
@@ -8,10 +8,12 @@ import { DrilldownPanel } from "@/components/DrilldownPanel";
 import { LandingPage } from "@/components/LandingPage";
 import { SearchWithSuggestions } from "@/components/SearchWithSuggestions";
 import { CustomReportFooter } from "@/components/CustomReportFooter";
+import { CandidateHub } from "@/components/CandidateHub";
 
 const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [showCandidateHub, setShowCandidateHub] = useState(false);
   const [drilldownOpen, setDrilldownOpen] = useState(false);
   const [drilldownData, setDrilldownData] = useState({
     title: "",
@@ -28,6 +30,18 @@ const Index = () => {
     setDrilldownData({ title, data, type });
     setDrilldownOpen(true);
   };
+
+  if (showCandidateHub) {
+    return (
+      <CandidateHub 
+        onStartNewSearch={() => {
+          setShowCandidateHub(false);
+          setShowDashboard(true);
+        }}
+        onViewProfile={(id) => console.log('View profile:', id)}
+      />
+    );
+  }
 
   if (!showDashboard) {
     return <LandingPage onSearch={(query, type) => handleSearch(query)} />;
@@ -61,6 +75,15 @@ const Index = () => {
           
           {/* Right actions */}
           <div className="flex items-center gap-3">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setShowCandidateHub(true)}
+              className="text-slate-600 border-slate-300 hover:border-blue-500"
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Candidate Hub
+            </Button>
             <Button variant="outline" size="sm" className="text-slate-600 border-slate-300 hover:border-blue-500">
               <BookmarkPlus className="h-4 w-4 mr-2" />
               Saved Reports
