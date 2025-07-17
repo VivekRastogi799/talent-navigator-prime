@@ -7,11 +7,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface ShortlistManagerProps {
-  candidates: any[];
+  candidates?: any[];
   onFilterChange?: (filters: any) => void;
+  onViewProfile?: (candidateId: string) => void;
+  onCompareSelected?: (candidateIds: string[]) => void;
 }
 
-export const ShortlistManager = ({ candidates = [], onFilterChange }: ShortlistManagerProps) => {
+export const ShortlistManager = ({ 
+  candidates = [], 
+  onFilterChange,
+  onViewProfile,
+  onCompareSelected 
+}: ShortlistManagerProps) => {
   const [sortBy, setSortBy] = useState('recent');
   const [filterBy, setFilterBy] = useState('all');
 

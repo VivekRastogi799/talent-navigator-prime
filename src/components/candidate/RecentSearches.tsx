@@ -8,12 +8,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface RecentSearchesProps {
-  onSelectSearch: (searchId: string) => void;
-  onViewCandidates: (searchId: string) => void;
+  onSelectSearch?: (searchId: string) => void;
+  onViewCandidates?: (searchId: string) => void;
+  onSearchSelect?: (search: any) => void;
+  onViewBookmarks?: () => void;
+  searchTerm?: string;
+  showBookmarkedOnly?: boolean;
 }
 
-export const RecentSearches = ({ onSelectSearch, onViewCandidates }: RecentSearchesProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
+export const RecentSearches = ({ 
+  onSelectSearch, 
+  onViewCandidates,
+  onSearchSelect,
+  onViewBookmarks,
+  searchTerm: externalSearchTerm,
+  showBookmarkedOnly = false
+}: RecentSearchesProps) => {
+  const [searchQuery, setSearchQuery] = useState(externalSearchTerm || "");
   const [sortBy, setSortBy] = useState("recent");
 
   const recentSearches = [
@@ -83,6 +94,20 @@ export const RecentSearches = ({ onSelectSearch, onViewCandidates }: RecentSearc
     );
   };
 
+  const handleSearchSelect = (search: any) => {
+    if (onSearchSelect) {
+      onSearchSelect(search);
+    } else if (onSelectSearch) {
+      onSelectSearch(search.id);
+    }
+  };
+
+  const handleViewCandidates = (searchId: string) => {
+    if (onViewCandidates) {
+      onViewCandidates(searchId);
+    }
+  };
+
   const renderSearchCard = (search: any) => (
     <Card key={search.id} className="border-slate-200 hover:border-primary/50 transition-colors cursor-pointer group">
       <CardContent className="p-4">
@@ -118,7 +143,7 @@ export const RecentSearches = ({ onSelectSearch, onViewCandidates }: RecentSearc
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => onSelectSearch(search.id)}
+                onClick={() => handleSearchSelect(search)}
                 className="text-primary border-primary hover:bg-primary hover:text-white"
               >
                 <BarChart3 className="h-4 w-4 mr-1" />
@@ -128,7 +153,7 @@ export const RecentSearches = ({ onSelectSearch, onViewCandidates }: RecentSearc
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => onViewCandidates(search.id)}
+                  onClick={() => handleViewCandidates(search.id)}
                   className="text-slate-600 hover:text-primary"
                 >
                   <Users className="h-4 w-4 mr-1" />
@@ -142,6 +167,9 @@ export const RecentSearches = ({ onSelectSearch, onViewCandidates }: RecentSearc
       </CardContent>
     </Card>
   );
+
+  // If showBookmarkedOnly is true, only show bookmarked searches
+  const searchesToShow = showBookmarkedOnly ? bookmarkedSearches : recentSearches;
 
   return (
     <div className="space-y-6">
@@ -172,53 +200,66 @@ export const RecentSearches = ({ onSelectSearch, onViewCandidates }: RecentSearc
         </Select>
       </div>
 
-      {/* Tabbed Content */}
-      <Tabs defaultValue="recent" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="recent">Recent Searches</TabsTrigger>
-          <TabsTrigger value="shortlists">Shortlists</TabsTrigger>
-          <TabsTrigger value="bookmarked">Bookmarked</TabsTrigger>
-        </TabsList>
+      {/* Content based on showBookmarkedOnly flag */}
+      {showBookmarkedOnly ? (
+        <div className="grid gap-4">
+          {filterSearches(searchesToShow).map(renderSearchCard)}
+          {filterSearches(searchesToShow).length === 0 && (
+            <Card className="border-slate-200">
+              <CardContent className="text-center py-8">
+                <p className="text-slate-500">No bookmarked searches yet.</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      ) : (
+        <Tabs defaultValue="recent" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="recent">Recent Searches</TabsTrigger>
+            <TabsTrigger value="shortlists">Shortlists</TabsTrigger>
+            <TabsTrigger value="bookmarked">Bookmarked</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="recent" className="space-y-4 mt-6">
-          <div className="grid gap-4">
-            {filterSearches(recentSearches).map(renderSearchCard)}
-            {filterSearches(recentSearches).length === 0 && (
-              <Card className="border-slate-200">
-                <CardContent className="text-center py-8">
-                  <p className="text-slate-500">No recent searches found.</p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </TabsContent>
+          <TabsContent value="recent" className="space-y-4 mt-6">
+            <div className="grid gap-4">
+              {filterSearches(recentSearches).map(renderSearchCard)}
+              {filterSearches(recentSearches).length === 0 && (
+                <Card className="border-slate-200">
+                  <CardContent className="text-center py-8">
+                    <p className="text-slate-500">No recent searches found.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </TabsContent>
 
-        <TabsContent value="shortlists" className="space-y-4 mt-6">
-          <div className="grid gap-4">
-            {filterSearches(shortlists).map(renderSearchCard)}
-            {filterSearches(shortlists).length === 0 && (
-              <Card className="border-slate-200">
-                <CardContent className="text-center py-8">
-                  <p className="text-slate-500">No shortlists created yet.</p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </TabsContent>
+          <TabsContent value="shortlists" className="space-y-4 mt-6">
+            <div className="grid gap-4">
+              {filterSearches(shortlists).map(renderSearchCard)}
+              {filterSearches(shortlists).length === 0 && (
+                <Card className="border-slate-200">
+                  <CardContent className="text-center py-8">
+                    <p className="text-slate-500">No shortlists created yet.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </TabsContent>
 
-        <TabsContent value="bookmarked" className="space-y-4 mt-6">
-          <div className="grid gap-4">
-            {filterSearches(bookmarkedSearches).map(renderSearchCard)}
-            {filterSearches(bookmarkedSearches).length === 0 && (
-              <Card className="border-slate-200">
-                <CardContent className="text-center py-8">
-                  <p className="text-slate-500">No bookmarked searches yet.</p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="bookmarked" className="space-y-4 mt-6">
+            <div className="grid gap-4">
+              {filterSearches(bookmarkedSearches).map(renderSearchCard)}
+              {filterSearches(bookmarkedSearches).length === 0 && (
+                <Card className="border-slate-200">
+                  <CardContent className="text-center py-8">
+                    <p className="text-slate-500">No bookmarked searches yet.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 };
