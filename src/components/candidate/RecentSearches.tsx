@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Search, Calendar, BarChart3, ChevronRight } from "lucide-react";
+import { Search, Calendar, BarChart3, ChevronRight, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
