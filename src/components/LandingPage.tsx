@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Search, Users, Sparkles } from "lucide-react";
+import { Search, Users, Sparkles, Clock, Star, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -58,36 +58,79 @@ export const LandingPage = ({ onSearch, onViewCandidateHub }: LandingPageProps) 
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10"></div>
-        <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-12">
-          <div className="text-center mb-12">
+        <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-8">
+          {/* Header */}
+          <div className="text-center mb-8">
             <div className="text-5xl font-bold gradient-text mb-4">
               TopTier
             </div>
             <h1 className="text-4xl font-bold text-slate-800 mb-4 leading-tight">
               AI-Powered Talent Intelligence Platform
             </h1>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-8 leading-relaxed">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
               Discover top-tier talent with advanced AI matching and comprehensive market insights
             </p>
           </div>
 
-          {/* Live Talent Stats - Moved to top for maximum attention */}
-          <LiveTalentStats />
+          {/* Quick Access Actions - Moved to prominent position */}
+          <div className="flex justify-center mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 items-center">
+              <Button
+                onClick={onViewCandidateHub}
+                variant="outline"
+                size="lg"
+                className="bg-white/90 backdrop-blur-sm border-2 border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-300 px-6 py-3 rounded-xl shadow-lg hover:shadow-xl group"
+              >
+                <Users className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform" />
+                <div className="text-left">
+                  <div className="font-semibold">Candidate Hub</div>
+                  <div className="text-xs opacity-75">Saved Candidates & Past Searches</div>
+                </div>
+              </Button>
+              
+              {/* Quick Stats */}
+              <div className="flex gap-4 text-center">
+                <div className="bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-sm border border-slate-200">
+                  <div className="flex items-center gap-2 text-blue-600">
+                    <Clock className="h-4 w-4" />
+                    <span className="text-sm font-medium">24 Recent Searches</span>
+                  </div>
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-sm border border-slate-200">
+                  <div className="flex items-center gap-2 text-green-600">
+                    <Star className="h-4 w-4" />
+                    <span className="text-sm font-medium">156 Profiles</span>
+                  </div>
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-sm border border-slate-200">
+                  <div className="flex items-center gap-2 text-purple-600">
+                    <TrendingUp className="h-4 w-4" />
+                    <span className="text-sm font-medium">22% Shortlists</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Live Talent Stats */}
+          <div className="mb-8">
+            <LiveTalentStats />
+          </div>
 
           {/* Search Section */}
-          <div className="max-w-5xl mx-auto mb-8">
+          <div className="max-w-5xl mx-auto">
             <Tabs defaultValue="jd" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8 bg-white/80 backdrop-blur-sm p-1 rounded-xl border border-slate-200">
+              <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/80 backdrop-blur-sm p-1 rounded-xl border border-slate-200 shadow-sm">
                 <TabsTrigger 
                   value="jd" 
-                  className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg font-medium transition-all duration-300"
+                  className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg font-medium transition-all duration-300 py-3"
                 >
                   <Sparkles className="h-4 w-4" />
                   NLP Search
                 </TabsTrigger>
                 <TabsTrigger 
                   value="skill" 
-                  className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg font-medium transition-all duration-300"
+                  className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg font-medium transition-all duration-300 py-3"
                 >
                   <Search className="h-4 w-4" />
                   Search by Designation/Skills
@@ -111,13 +154,13 @@ export const LandingPage = ({ onSearch, onViewCandidateHub }: LandingPageProps) 
                         <h4 className="text-sm font-semibold text-slate-700 mb-3">Try these examples:</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {samplePrompts.map((prompt, index) => (
-                            <div 
+                            <button 
                               key={index}
-                              className="cursor-pointer hover:bg-primary/10 hover:border-primary text-left justify-start p-3 h-auto whitespace-normal border border-slate-200 rounded-lg transition-all duration-300"
+                              className="cursor-pointer hover:bg-primary/10 hover:border-primary text-left p-3 h-auto whitespace-normal border border-slate-200 rounded-lg transition-all duration-300 bg-white/50"
                               onClick={() => setJdText(prompt)}
                             >
                               {prompt}
-                            </div>
+                            </button>
                           ))}
                         </div>
                       </div>
@@ -137,18 +180,6 @@ export const LandingPage = ({ onSearch, onViewCandidateHub }: LandingPageProps) 
                 </Card>
               </TabsContent>
             </Tabs>
-          </div>
-
-          {/* Saved Candidates & Past Searches - Grouped together */}
-          <div className="text-center mb-12">
-            <Button
-              onClick={onViewCandidateHub}
-              variant="outline"
-              className="bg-white/80 backdrop-blur-sm border-2 border-primary text-primary hover:bg-primary hover:text-white transition-all duration-300 px-8 py-3 text-lg font-medium rounded-xl premium-shadow"
-            >
-              <Users className="h-5 w-5 mr-2" />
-              Saved Candidates & Past Searches
-            </Button>
           </div>
         </div>
       </div>

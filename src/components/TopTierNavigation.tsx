@@ -1,108 +1,105 @@
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { 
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu';
+import { Search, Bell, MessageSquare, Briefcase, Users, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface TopTierNavigationProps {
-  onTopTierClick: () => void;
+  onEnterTopTier: () => void;
 }
 
-export const TopTierNavigation = ({ onTopTierClick }: TopTierNavigationProps) => {
+export const TopTierNavigation = ({ onEnterTopTier }: TopTierNavigationProps) => {
   return (
     <div className="bg-white border-b border-slate-200 shadow-sm">
+      {/* Main Navigation */}
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center">
-            <div className="text-2xl font-bold text-blue-600">naukri</div>
-          </div>
-
-          {/* Navigation Menu */}
-          <NavigationMenu>
-            <NavigationMenuList className="flex items-center space-x-8">
-              <NavigationMenuItem>
-                <NavigationMenuLink className="text-slate-700 hover:text-blue-600 font-medium">
-                  Jobs & Responses
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              
-              <NavigationMenuItem>
-                <NavigationMenuLink className="text-slate-700 hover:text-blue-600 font-medium">
-                  Resdex
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-slate-700 hover:text-blue-600 font-medium">
-                  Airex
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="w-64 p-4 space-y-2">
-                    <NavigationMenuLink className="block px-3 py-2 text-slate-700 hover:bg-slate-100 rounded">
-                      Talent Pulse
-                    </NavigationMenuLink>
-                    <NavigationMenuLink className="block px-3 py-2 text-slate-700 hover:bg-slate-100 rounded">
-                      Usage Pulse
-                    </NavigationMenuLink>
-                    <NavigationMenuLink className="block px-3 py-2 text-slate-700 hover:bg-slate-100 rounded">
-                      Job Posting
-                    </NavigationMenuLink>
-                    <NavigationMenuLink className="block px-3 py-2 text-slate-700 hover:bg-slate-100 rounded">
-                      Resdex
-                    </NavigationMenuLink>
-                    <NavigationMenuLink className="block px-3 py-2 text-slate-700 hover:bg-slate-100 rounded">
-                      NFL Report
-                    </NavigationMenuLink>
-                    <NavigationMenuLink className="block px-3 py-2 text-slate-700 hover:bg-slate-100 rounded">
-                      Mobile Solutions
-                    </NavigationMenuLink>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-
-              {/* TopTier Entry Point */}
-              <NavigationMenuItem>
+          {/* Left Section - Logo and Nav */}
+          <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-2">
+              <div className="text-2xl font-bold text-blue-600">naukri</div>
+              <span className="text-xs text-slate-500">.com</span>
+            </div>
+            
+            <nav className="flex items-center space-x-6">
+              <a href="#" className="text-slate-700 hover:text-blue-600 font-medium">Jobs</a>
+              <a href="#" className="text-slate-700 hover:text-blue-600 font-medium">Companies</a>
+              <a href="#" className="text-slate-700 hover:text-blue-600 font-medium">Services</a>
+              <div className="flex items-center space-x-1">
+                <a href="#" className="text-slate-700 hover:text-blue-600 font-medium">AirEx</a>
+                <span className="text-slate-300">|</span>
                 <Button
-                  onClick={onTopTierClick}
+                  onClick={onEnterTopTier}
                   variant="ghost"
-                  className="text-slate-700 hover:text-blue-600 font-medium bg-gradient-to-r from-purple-100 to-blue-100 hover:from-purple-200 hover:to-blue-200 transition-all duration-300"
+                  className="text-primary hover:text-primary hover:bg-primary/10 font-medium px-2 py-1 h-auto"
                 >
                   TopTier
                 </Button>
-              </NavigationMenuItem>
+                <span className="text-slate-300">|</span>
+                <a href="#" className="text-slate-700 hover:text-blue-600 font-medium">TalentPulse</a>
+              </div>
+            </nav>
+          </div>
 
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-slate-700 hover:text-blue-600 font-medium">
-                  Analytics
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="w-48 p-4 space-y-2">
-                    <NavigationMenuLink className="block px-3 py-2 text-slate-700 hover:bg-slate-100 rounded">
-                      Talent Pulse
-                    </NavigationMenuLink>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-
-          {/* Right side actions */}
+          {/* Right Section - Search and Profile */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="text-slate-600">
-              Recent
-            </Button>
-            <Button variant="ghost" size="sm" className="text-slate-600">
-              Search
-            </Button>
-            <Button variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">
-              naukri talent cloud
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Input
+                placeholder="Search jobs, skills, companies..."
+                className="pl-10 pr-4 py-2 w-80 border-slate-200 rounded-lg focus:border-blue-500"
+              />
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-blue-600">
+                <Bell className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-blue-600">
+                <MessageSquare className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-blue-600">
+                <Briefcase className="h-5 w-5" />
+              </Button>
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                R
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* TopTier Preview Banner - only show when hovering over TopTier */}
+      <div className="bg-gradient-to-r from-primary/5 to-primary/10 border-t border-primary/20">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                  <TrendingUp className="h-4 w-4 text-white" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-slate-800">TopTier AI Recruiting</div>
+                  <div className="text-xs text-slate-600">Premium talent intelligence platform</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4 text-sm text-slate-600">
+                <div className="flex items-center space-x-1">
+                  <Users className="h-4 w-4" />
+                  <span>2.8M+ Premium Candidates</span>
+                </div>
+                <div>•</div>
+                <div>AI-Powered Matching</div>
+                <div>•</div>
+                <div>Real-time Market Insights</div>
+              </div>
+            </div>
+            
+            <Button
+              onClick={onEnterTopTier}
+              className="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg shadow-sm"
+            >
+              Enter TopTier
             </Button>
           </div>
         </div>
